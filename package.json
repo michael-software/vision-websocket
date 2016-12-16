@@ -1,0 +1,24 @@
+{
+  "name": "vision-websocket",
+  "version": "0.0.1",
+  "description": "Websocket-Server for Vision",
+  "main": "app/index.js",
+  "scripts": {
+    "start": "node --harmony app/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michaelsoftware1997/vision-websocket.git"
+  },
+  "author": "Michael Braun",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/michaelsoftware1997/vision-websocket/issues"
+  },
+  "homepage": "https://github.com/michaelsoftware1997/vision-websocket#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "node-fetch": "^1.6.3",
+    "socket.io": "^1.7.2"
+  }
+}
