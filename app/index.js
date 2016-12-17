@@ -2,7 +2,8 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-var LoginHelper = require('./utils/login/LoginHelper.jsx');
+var LoginHelper = require('./utils/helper/LoginHelper.jsx');
+var PluginHelper  = require('./utils/helper/PluginHelper.js');
 
 var __dirname = './app/public/';
 
@@ -24,17 +25,33 @@ io.on('connection', function(socket){
     });
 
 
-    loginHelper.on('login', (data) => {
-        socket.emit('loginstatus', {status: 200});
+    loginHelper.on('login', (user) => {
+        user.status = 200;
+        socket.emit('loginstatus', user);
+
+
+        let pluginHelper = new PluginHelper(loginHelper);
+        socket.on('plugins', (data) => {
+            if(data == 'true') {
+                pluginHelper.getPlugins(user).then((data) => {
+                    socket.emit('plugins', data);
+                });
+            }
+        });
     });
     loginHelper.on('unauthorized', (data) => {
-        socket.emit('loginstatus', {status: 401});
+        data.status = 401;
+        socket.emit('loginstatus', data);
     });
 
 
 
     socket.on('login', function(data) {
-        loginHelper.login('##url##', data.bearer);
+        if(data.server && data.bearer) {
+            loginHelper.loginToken(data.server, data.bearer);
+        } else if(data.server && data.username && data.password) {
+            loginHelper.loginCredentials(data.server, data.username, data.password);
+        }
 
         console.log('Login', data);
     })
