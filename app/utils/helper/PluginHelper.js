@@ -24,6 +24,34 @@ class PluginHelper {
 			}
 		});
 	}
+
+	getPlugin(name, view, param) {
+		//console.log('this', data);
+
+		return new Promise((resolve, reject) => {
+			if (this.loginHelper.getServer() && this.loginHelper.getToken()) {
+				let url = `${this.loginHelper.getServer()}/api/plugin.php?plugin=${name}`;
+				if(view) {
+					url += `&page=${view}`;
+				}
+				if(param) {
+					url += `&cmd=${param}`;
+				}
+
+				return fetch(url, {
+					headers: {
+						Authorization: `bearer ${this.loginHelper.getToken()}`
+					}
+				}).then(function (data) {
+					if (!data) {
+						throw new Error('Bad response');
+					}
+
+					resolve( data.json() );
+				}).catch(reject);
+			}
+		});
+	}
 }
 
 module.exports = PluginHelper;

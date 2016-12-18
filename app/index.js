@@ -38,6 +38,17 @@ io.on('connection', function(socket){
                 });
             }
         });
+
+        socket.on('plugin', (data) => {
+            if(data && data.name) {
+                pluginHelper.getPlugin(data.name, data.view, data.param).then((response) => {
+                    socket.emit('plugin', {
+                        request: data,
+                        response: response
+                    });
+                });
+            }
+        });
     });
     loginHelper.on('unauthorized', (data) => {
         data.status = 401;
