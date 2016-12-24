@@ -3,13 +3,10 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 var LoginHelper = require('./utils/helper/LoginHelper.jsx');
-var PluginHelper  = require('./utils/helper/PluginHelper.js');
+var SocketHelper = require('./utils/helper/SocketHelper');
 
-var __dirname = './app/public/';
+var __dirname = './public/';
 
-app.get('/', function(req, res){
-    res.sendfile(__dirname + 'index.html');
-});
 
 http.listen(3000, function(){
     console.log('listening on *:3000');
@@ -25,30 +22,13 @@ io.on('connection', function(socket){
     });
 
 
+    let socketHelper = new SocketHelper(socket);
+
     loginHelper.on('login', (user) => {
         user.status = 200;
         socket.emit('loginstatus', user);
 
-
-        let pluginHelper = new PluginHelper(loginHelper);
-        socket.on('plugins', (data) => {
-            if(data == 'true') {
-                pluginHelper.getPlugins(user).then((data) => {
-                    socket.emit('plugins', data);
-                });
-            }
-        });
-
-        socket.on('plugin', (data) => {
-            if(data && data.name) {
-                pluginHelper.getPlugin(data.name, data.view, data.param).then((response) => {
-                    socket.emit('plugin', {
-                        request: data,
-                        response: response
-                    });
-                });
-            }
-        });
+        socketHelper.register(loginHelper, user);
     });
     loginHelper.on('unauthorized', (data) => {
         data.status = 401;
