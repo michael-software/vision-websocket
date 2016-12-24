@@ -5,6 +5,10 @@ class PluginHelper {
 		this.loginHelper = loginHelper;
 	}
 
+	setLoginHelper(loginHelper) {
+		this.loginHelper = loginHelper;
+	}
+
 	getPlugins(data) {
 		//console.log('this', data);
 
@@ -22,6 +26,8 @@ class PluginHelper {
 					resolve( data.json() );
 				}).catch(reject);
 			}
+
+			reject('unknown error');
 		});
 	}
 
@@ -50,6 +56,8 @@ class PluginHelper {
 					resolve( data.json() );
 				}).catch(reject);
 			}
+
+            reject('unknown error');
 		});
 	}
 }
