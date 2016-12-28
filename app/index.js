@@ -1,11 +1,19 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+const fs = require('fs');
 
 var LoginHelper = require('./utils/helper/LoginHelper.jsx');
 var SocketHelper = require('./utils/helper/SocketHelper');
 
 var __dirname = './public/';
+
+
+try {
+    fs.mkdirSync('temp/');
+} catch(e) {
+    if ( e.code != 'EEXIST' ) throw e;
+}
 
 
 http.listen(3000, function(){
@@ -14,6 +22,7 @@ http.listen(3000, function(){
 
 io.on('connection', function(socket){
     let loginHelper = new LoginHelper();
+    let socketHelper = new SocketHelper(socket);
 
     console.log('user connected');
 
@@ -21,8 +30,6 @@ io.on('connection', function(socket){
         console.log('user disconnected');
     });
 
-
-    let socketHelper = new SocketHelper(socket);
 
     loginHelper.on('login', (user) => {
         user.status = 200;
