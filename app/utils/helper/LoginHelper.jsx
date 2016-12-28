@@ -1,5 +1,6 @@
 var fetch = require('node-fetch');
 var FormData = require('form-data');
+const fs = require('fs');
 
 
 class LoginHelper {
@@ -84,12 +85,16 @@ class LoginHelper {
     }
 
     parseLoginInfo(data) {
-        console.log('parsedata');
         if(data.username && data.token && data.server) {
             this.username = data.username;
             this.token = data.token;
             this.server = data.server;
+            this.id = data.id;
         }
+    }
+
+    getId() {
+        return this.id;
     }
 
     getServer() {
