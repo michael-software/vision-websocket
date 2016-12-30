@@ -2,6 +2,8 @@ const PluginHelper  = require('./PluginHelper.js');
 const SearchHelper  = require('./SearchHelper.js');
 const UploadHelper  = require('./UploadHelper.js');
 const fs            = require('fs');
+const fetch         = require('node-fetch');
+const FormData      = require('form-data');
 
 class SocketHelper {
     constructor(socket) {
@@ -18,6 +20,8 @@ class SocketHelper {
         socket.on('search', this.getSearch.bind(this));
 
         socket.on('upload', this.upload.bind(this));
+
+        socket.on('async', this.async.bind(this));
 
         socket.on('disconnect', this.disconnect.bind(this));
     }
@@ -107,6 +111,42 @@ class SocketHelper {
         });
         /* TODO: callback helper as object (multiple instances/different users) */
         console.log('upload', data);
+    }
+
+    async(obj) {
+        if(obj.plugin && obj.action) {
+            let formData = new FormData();
+            formData.append('plugin', obj.plugin);
+            formData.append('action', obj.action);
+
+            if(obj.value)
+                formData.append('value', obj.value);
+
+            let header = {
+                method: 'POST',
+                headers: {
+                    Authorization: 'bearer ' + this.loginHelper.getToken()
+                },
+                body: formData
+            };
+
+            console.log(this.loginHelper.getToken());
+
+            fetch(this.loginHelper.getServer() + '/api/async.php', header).then((data) => {
+                console.log(data.status);
+
+                if(data.status != 200) {
+                    throw new Error('Bad statusCode');
+                }
+
+                return data.text();
+            }).then((data) => {
+                console.log(data);
+            }).catch((error) => {
+
+            });
+            console.log('async', obj.plugin, obj.action);
+        }
     }
 }
 
