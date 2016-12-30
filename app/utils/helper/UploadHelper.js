@@ -43,9 +43,11 @@ class UploadHelper {
     }
 
     removeAll() {
-        let id = (this.socketHelper.getLoginHelper()).getId();
+        let loginHelper = this.socketHelper.getLoginHelper();
 
-        UploadHelper.deleteFolderRecursive('temp/' + id);
+        if(loginHelper && loginHelper.getId()) {
+            UploadHelper.deleteFolderRecursive('temp/' + loginHelper.getId());
+        }
     }
 
     static deleteFolderRecursive (path) {
