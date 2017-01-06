@@ -1,6 +1,9 @@
 var fetch = require('node-fetch');
 var FormData = require('form-data');
 const fs = require('fs');
+const crypto = require('crypto');
+
+const JwtHelper = require('./JwtHelper');
 
 
 class LoginHelper {
@@ -12,71 +15,106 @@ class LoginHelper {
     }
 
     loginToken(server, authtoken) {
-        return fetch(`${server}/api/login.php`, {
-            headers: {
-                Authorization: `bearer ${authtoken}`
-            }
-        }).then(function(data) {
-            if(data.status == 401) {
-                throw new Error('Bad message');
-            } else {
-                return data.json();
-            }
-        }).then((data) => {
-            this.isLoggedIn = true;
+		if(this.socketHelper) {
+		    this.jwtHelper.validate(authtoken).then((data) => {
 
-            data.server = server;
-            data.token = authtoken;
+				let loginData = {
+					server: server,
+					username: data.username,
+					id: data.id,
+					token: authtoken
+				};
+
+				this.parseLoginInfo(loginData);
+
+				if(this.$login) {
+					this.$login(loginData);
+				}
+            }).catch((error) => {
+                if(this.$unauthorized) {
+                    this.$unauthorized(error);
+                }
+            });
+		}
 
 
-            this.parseLoginInfo(data);
-
-            if(this.$login) {
-                this.$login(data);
-            }
-        }).catch((error) => {
-
-            if(this.$unauthorized) {
-                this.$unauthorized(error);
-            }
-
-            console.warn(error);
-        });
+        // return fetch(`${server}/api/login.php`, {
+        //     headers: {
+        //         Authorization: `bearer ${authtoken}`
+        //     }
+        // }).then(function(data) {
+        //     return data.text();
+		//
+        //     if(data.status == 401) {
+        //         throw new Error('Bad message');
+        //     } else {
+        //         return data.json();
+        //     }
+        // }).then((data) => {
+        //     console.log(data);
+        //     this.isLoggedIn = true;
+		//
+        //     data.server = server;
+        //     data.token = authtoken;
+		//
+		//
+        //     this.parseLoginInfo(data);
+		//
+        //     if(this.$login) {
+        //         this.$login(data);
+        //     }
+        // }).catch((error) => {
+		//
+        //     if(this.$unauthorized) {
+        //         this.$unauthorized(error);
+        //     }
+		//
+        //     console.warn(error);
+        // });
     }
 
     loginCredentials(server, username, password) {
-        let formData = new FormData();
-        formData.append('username', username);
-        formData.append('password', password);
+        if(this.socketHelper) {
+            username = username.toLowerCase();
 
-        return fetch(`${server}/api/login.php?action=login`, {
-            method: 'POST',
-            body: formData
-        }).then(function(data) {
-            if(data.status == 401) {
-                throw new Error('Bad message');
-            } else {
-                return data.json();
-            }
-        }).then((data) => {
-            this.isLoggedIn = true;
+			this.socketHelper.getDatabaseHelper().query({
+			    sql: "SELECT * FROM `users` WHERE `username`=? LIMIT 0,1",
+                values: [username]
+			}).then((data) => {
+			    if(data.rows && data.rows[0] && data.rows[0].digesta1 == this.getDigesta(username, password)) {
+					let row = data.rows[0];
 
-            data.server = server;
+					if(row.username && row.id) {
+						this.isLoggedIn = true;
 
+						this.jwtHelper.get(server, row.id, row.username).then((token) => {
+							let loginData = {
+								server: server,
+								username: row.username,
+								id: row.id,
+								token: token
+							};
 
-            this.parseLoginInfo(data);
+							this.parseLoginInfo(loginData);
 
-            if(this.$login) {
-                this.$login(data);
-            }
-        }).catch((error) => {
+							if (this.$login) {
+								this.$login(loginData);
+							}
+                        });
+					}
+                }
 
-            if(this.$unauthorized) {
-                this.$unauthorized(error);
-            }
+                return Promise.reject();
+			}).catch((error) => {
+				if(this.$unauthorized) {
+					this.$unauthorized();
+				}
+            });
+        }
+    }
 
-            console.warn(error);
-        });
+    getDigesta(username, password) {
+        return crypto.createHash('md5').update(`${username.toLowerCase()}:SabreDAV:${password}`).digest('hex');
     }
 
     on(type, callback) {
