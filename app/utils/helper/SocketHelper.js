@@ -1,6 +1,7 @@
 const PluginHelper  = require('./PluginHelper.js');
 const SearchHelper  = require('./SearchHelper.js');
 const UploadHelper  = require('./UploadHelper.js');
+const DatabaseHelper= require('./DatabaseHelper.js');
 const fs            = require('fs');
 const fetch         = require('node-fetch');
 const FormData      = require('form-data');
@@ -10,6 +11,7 @@ class SocketHelper {
         this.uploadHelper = new UploadHelper(this);
         this.pluginHelper = new PluginHelper(this);
         this.searchHelper = new SearchHelper();
+        this.databaseHelper = new DatabaseHelper(this);
         this.socket = socket;
 
 
@@ -78,6 +80,10 @@ class SocketHelper {
 
     getUploadHelper() {
         return this.uploadHelper;
+    }
+
+	getDatabaseHelper() {
+        return this.databaseHelper;
     }
 
     upload(data) {
