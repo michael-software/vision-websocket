@@ -41,7 +41,6 @@ class PluginHelper {
 		//console.log('this', data);
 
 		return new Promise((resolve, reject) => {
-            console.log(this.loginHelper);
 			if (this.loginHelper.getServer() && this.loginHelper.getToken()) {
 				let url = `${this.loginHelper.getServer()}/api/plugin.php?plugin=${name}`;
 				if(view) {

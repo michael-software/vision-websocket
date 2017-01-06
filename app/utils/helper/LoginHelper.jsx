@@ -4,6 +4,13 @@ const fs = require('fs');
 
 
 class LoginHelper {
+    constructor(socketHelper) {
+        if(socketHelper.getDatabaseHelper) {
+            this.socketHelper = socketHelper;
+            this.jwtHelper = new JwtHelper(socketHelper);
+        }
+    }
+
     loginToken(server, authtoken) {
         return fetch(`${server}/api/login.php`, {
             headers: {
