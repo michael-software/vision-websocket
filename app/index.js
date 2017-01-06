@@ -21,8 +21,8 @@ http.listen(3000, function(){
 });
 
 io.on('connection', function(socket){
-    let loginHelper = new LoginHelper();
     let socketHelper = new SocketHelper(socket);
+	let loginHelper = new LoginHelper(socketHelper);
 
     console.log('user connected');
 
