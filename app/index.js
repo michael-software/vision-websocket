@@ -38,16 +38,21 @@ io.on('connection', function(socket){
         socketHelper.register(loginHelper, user);
     });
     loginHelper.on('unauthorized', (data) => {
-        data.status = 401;
-        socket.emit('loginstatus', data);
+        socket.emit('loginstatus', {
+			head: {
+				status:401
+			}
+		});
     });
 
 
 
     socket.on('login', function(data) {
         if(data.server && data.bearer) {
+			console.log('login with token');
             loginHelper.loginToken(data.server, data.bearer);
         } else if(data.server && data.username && data.password) {
+            console.log('login with credentials');
             loginHelper.loginCredentials(data.server, data.username, data.password);
         }
 
