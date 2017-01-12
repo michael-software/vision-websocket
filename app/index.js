@@ -17,20 +17,21 @@ try {
 
 
 http.listen(3000, function(){
-    console.log('listening on *:3000');
+    console.info('\x1b[36m%s\x1b[0m', 'listening on *:3000');
 });
 
 io.on('connection', function(socket){
     let socketHelper = new SocketHelper(socket);
 	let loginHelper = new LoginHelper(socketHelper);
 
-    console.log('user connected');
+    console.info('\x1b[36m%s\x1b[0m', 'user connected');
 
     socket.on('disconnect', function(){
-        console.log('user disconnected');
+        console.info('\x1b[36m%s\x1b[0m', 'user disconnected');
     });
 
 
+	socketHelper.register(loginHelper);
     loginHelper.on('login', (user) => {
         user.status = 200;
         socket.emit('loginstatus', user);
@@ -49,13 +50,11 @@ io.on('connection', function(socket){
 
     socket.on('login', function(data) {
         if(data.server && data.bearer) {
-			console.log('login with token');
+			console.log('	\x1b[33m%s\x1b[0m:', 'login with token');
             loginHelper.loginToken(data.server, data.bearer);
         } else if(data.server && data.username && data.password) {
-            console.log('login with credentials');
+            console.log('	\x1b[33m%s\x1b[0m:', 'login with credentials');
             loginHelper.loginCredentials(data.server, data.username, data.password);
         }
-
-        console.log('Login', data);
     })
 });

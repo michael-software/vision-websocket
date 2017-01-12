@@ -1,6 +1,7 @@
 var jwt = require('jsonwebtoken');
 const ALGORITHM = 'HS256';
 const TOLERANCE = 2592000; // 30 days
+const EXPIRES = 60; // default: 7200
 
 class JwtHelper {
 	constructor(socketHelper) {
@@ -14,7 +15,8 @@ class JwtHelper {
 			username: username
 		}, 'secret', {
 			algorithm: ALGORITHM,
-			expiresIn: 7200
+			expiresIn: EXPIRES,
+			audience: [server]
 		});
 
 		let signature = this._getSignature(token);
@@ -37,8 +39,6 @@ class JwtHelper {
 	}
 
 	validate(token) {
-		console.log('token', token);
-
 		return new Promise((resolve, reject) => {
 			if(!token) reject('no token');
 
@@ -46,13 +46,13 @@ class JwtHelper {
 				algorithm: ALGORITHM,
 				ignoreExpiration: false,
 				clockTolerance: TOLERANCE
-			}, function(error, decoded) {
+			}, (error, decoded) => {
 				if(error instanceof jwt.TokenExpiredError) {
-					console.log('[JWT] TokenExpiredError');
+					console.warn('\x1b[31m', '[JWT] TokenExpiredError');
 
 					return reject(error);
 				} else if(error) {
-					console.log('[JWT] error', error);
+					console.warn('\x1b[31m', '[JWT] error', error);
 
 					return reject(error);
 				}
@@ -65,16 +65,59 @@ class JwtHelper {
 					});
 				} else if(decoded.sub) {
 					this.socketHelper.getDatabaseHelper().query({
-						sql: "SELECT * FROM `jwt` WHERE user=? AND signature=?",
+						sql: "SELECT * FROM `jwt` WHERE user=? AND signature=? LIMIT 0,1",
 						values: [decoded.sub, this._getSignature(token)]
 					}).then((data) => {
-						console.log('Expired:', data);
+						if(data && data.rows && data.rows[0]) {
+							let row = data.rows[0];
+
+							if(row.refused === 0) {
+								return data;
+							} else {
+								return reject();
+							}
+						} else {
+							return reject();
+						}
+					}).then((data) => {
+						this._update(decoded).then((token) => {
+							console.log('updated');
+
+							return resolve({
+								id: decoded.sub,
+								username: decoded.username,
+								token: token,
+								server: decoded.aud[0]
+							});
+						}).catch((error) => {
+							console.warn('\x1b[31m', 'token error', error);
+						});
 					}).catch((error) => {
-						reject(error);
+						return reject(error);
 					});
 				}
 			});
 		});
+	}
+
+	_update(decoded) {
+		if(decoded.aud && decoded.aud[0] && decoded.username && decoded.sub) {
+
+			return this.get(decoded.aud[0], decoded.sub, decoded.username).then((token) => {
+				// this.socketHelper.getSocket().emit('jwt_update', {
+				// 	status: 200,
+				// 	token: token,
+				// 	server: decoded.aud,
+				// 	username: decoded.sub
+				// });
+
+				this.socketHelper.getLoginHelper().setToken(token);
+
+				return Promise.resolve(token);
+			});
+		} else {
+			return Promise.reject();
+		}
 	}
 
 	_save(userid, signature) {
@@ -82,9 +125,9 @@ class JwtHelper {
 			sql: "INSERT INTO `jwt` (`name`, `signature`, `user`) VALUES (?, ?, ?)",
 			values: ['Endgerät', signature, userid]
 		}).then((data) => {
-			console.log(data);
+			return Promise.resolve(data);
 		}).catch((error) => {
-			console.log('error', error);
+			console.warn('error', error);
 		});
 	}
 }

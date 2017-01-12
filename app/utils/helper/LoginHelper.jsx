@@ -18,6 +18,8 @@ class LoginHelper {
 		if(this.socketHelper) {
 		    this.jwtHelper.validate(authtoken).then((data) => {
 
+		    	console.log('validated', data);
+
 				let loginData = {
 					server: server,
 					username: data.username,
@@ -31,6 +33,8 @@ class LoginHelper {
 					this.$login(loginData);
 				}
             }).catch((error) => {
+				console.warn('setted token', error);
+
                 if(this.$unauthorized) {
                     this.$unauthorized(error);
                 }
@@ -153,6 +157,10 @@ class LoginHelper {
     getToken() {
         return this.token;
     }
+
+	setToken(token) {
+		this.token = token;
+	}
 }
 
 module.exports = LoginHelper;

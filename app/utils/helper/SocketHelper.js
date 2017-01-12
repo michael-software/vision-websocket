@@ -32,11 +32,12 @@ class SocketHelper {
         this.pluginHelper.setLoginHelper(loginHelper);
         this.searchHelper.setLoginHelper(loginHelper);
         this.loginHelper = loginHelper;
+
+        if(user)
         this.user = user;
     }
 
     disconnect() {
-        console.log('disconnected');
         this.uploadHelper.removeAll();
     }
 
@@ -49,7 +50,7 @@ class SocketHelper {
     }
 
     getPlugin(data) {
-        console.log('requestPlugin', data);
+        console.info('requestPlugin', data);
 
         if(data && data.name) {
             this.pluginHelper.getPlugin(data.name, data.view, data.param, data.formData).then((response) => {
@@ -62,8 +63,6 @@ class SocketHelper {
     }
 
     getSearch(data) {
-        console.log(data);
-
         if(data && data.query) {
             this.searchHelper.getSearch(data.query).then((response) => {
                 this.socket.emit('search', {
@@ -84,6 +83,10 @@ class SocketHelper {
 
 	getDatabaseHelper() {
         return this.databaseHelper;
+    }
+
+    getSocket() {
+        return this.socket;
     }
 
     upload(data) {
@@ -108,7 +111,6 @@ class SocketHelper {
                 fs.write(fd, data.data, 0, data.data.byteLength, 0, (error) => {
                     if(error == null)
                     fs.close(fd, () => {
-                        console.log('closed');
                         this.uploadHelper.setUploaded(data.id, path + name);
                     });
 
@@ -116,7 +118,6 @@ class SocketHelper {
             }
         });
         /* TODO: callback helper as object (multiple instances/different users) */
-        console.log('upload', data);
     }
 
     async(obj) {
@@ -136,11 +137,7 @@ class SocketHelper {
                 body: formData
             };
 
-            console.log(this.loginHelper.getToken());
-
             fetch(this.loginHelper.getServer() + '/api/async.php', header).then((data) => {
-                console.log(data.status);
-
                 if(data.status != 200) {
                     throw new Error('Bad statusCode');
                 }
@@ -151,7 +148,6 @@ class SocketHelper {
             }).catch((error) => {
 
             });
-            console.log('async', obj.plugin, obj.action);
         }
     }
 }
