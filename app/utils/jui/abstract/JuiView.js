@@ -36,6 +36,18 @@ class JuiView {
 	}
 
 	/**
+	 * Removes a property from the elemnt
+	 * @param key {String} - Key of the property (TYPE is not allowed)
+	 */
+	removeProperty(key) {
+		key = JuiView.getPropertyKey(String(key).toLowerCase());
+
+		if(key === JuiView.getPropertyKey(JuiView.TYPE)) return
+
+		this._element[key] = undefined;
+	}
+
+	/**
 	 * Creates a new array when key is empty, Adds an entry when key is an array
 	 * @param key {String} - Key of property
 	 * @param value {*} - Value that should be added to key
