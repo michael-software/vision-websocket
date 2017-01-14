@@ -55,6 +55,39 @@ console.log(juiHelper);
 	select.add('Test');
 	select.add('Hallo', 'Test');
 
+	let table = new juiHelper.Table();
+		let row = new juiHelper.Table.Row();
+		row.add('Test');
+		row.add('0,25');
+	table.add(row);
+		let row2 = new juiHelper.Table.Row();
+		row2.add('Test');
+		row2.add([headline, checkbox]);
+	table.add(row2);
+	table.setStyle({
+		width: '100%',
+		padding: 10,
+		margin: {
+			top: 30,
+			right: 15,
+			bottom: 8,
+			left: 8
+		},
+		background: '#FF0000',
+		visibility: juiHelper.Table.VISIBILITY_AWAY
+	});
+	table.setStyle({
+		width: '50%',
+		padding: {
+			top: 20,
+			right: 50,
+			bottom: 0,
+			left: 6
+		},
+		color: '#FFFFFF',
+		visibility: null
+	});
+
 
 	juiHelper.add(headline);
 	juiHelper.nline(2);
@@ -67,6 +100,7 @@ console.log(juiHelper);
 	juiHelper.add(list1);
 	juiHelper.add(image);
 	juiHelper.add(select);
+	juiHelper.add(table);
 
 	return juiHelper.getArray();
 };
