@@ -16,6 +16,9 @@ const shorthands = require('./const/shorthands');
 
 
 class JuiHelper {
+	/**
+	 * Creates a new JuiHelper
+	 */
 	constructor() {
 		this._elements = [];
 
@@ -32,20 +35,35 @@ class JuiHelper {
 		this.Select = Select;
 	}
 
+	/**
+	 * Get an JSON-Object representing the elements in jui-style
+	 */
 	getJson() {
 		return JSON.stringify( this._elements );
 	}
 
+	/**
+	 * Get the jui-elements
+	 * @returns {Array} - Returns all elements added to the jui
+	 */
 	getArray() {
 		return this._elements;
 	}
 
+	/**
+	 * Adds a new element to the jui
+	 * @param view {JuiView} - View that should be added
+	 */
 	add(view) {
 		if(view instanceof JuiView) {
 			this._elements.push( view.getArray() );
 		}
 	}
 
+	/**
+	 * Adds a new line to the jui
+	 * @param count {int} - How many new lines should be inserted
+	 */
 	nline(count) {
 		if(!count) count = 1;
 		for(let i = 0; i < count; i++) {
@@ -53,6 +71,9 @@ class JuiHelper {
 		}
 	}
 
+	/**
+	 * Adds a horizontal line to the jui
+	 */
 	hline() {
 		this._elements.push({ [shorthands.keys.type]: shorthands.values.type.hline });
 	}
