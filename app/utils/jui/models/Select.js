@@ -1,6 +1,10 @@
 let JuiInputView = require('../abstract/JuiInputView');
 
-class Input extends JuiInputView {
+class Select extends JuiInputView {
+	/**
+	 * Creates a new Select-elemnt
+	 * @param name - The name under that the value will be send to the server
+	 */
 	constructor( name ) {
 		super(name);
 
@@ -10,6 +14,11 @@ class Input extends JuiInputView {
 		}
 	}
 
+	/**
+	 * Adds a new entry to the Select element.
+	 * @param {string} key - Text that will be send to server
+	 * @param {string} [value] - Text that will be shown in Select element
+	 */
 	add(key, value) {
 		if(key && value) {
 			this.appendProperty(JuiInputView.VALUE, [String(key), String(value)]);
@@ -21,4 +30,4 @@ class Input extends JuiInputView {
 }
 
 
-module.exports = Input;
+module.exports = Select;

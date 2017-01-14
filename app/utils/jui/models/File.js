@@ -1,6 +1,10 @@
 let JuiInputView = require('../abstract/JuiInputView');
 
 class File extends JuiInputView {
+	/**
+	 * Creates a new File element
+	 * @param name {String} - The name of the element that will be used when sending data to the server
+	 */
 	constructor( name ) {
 		super(name);
 
@@ -10,6 +14,10 @@ class File extends JuiInputView {
 		}
 	}
 
+	/**
+	 * Set whether it is allowed to select multiple files
+	 * @param boolean {boolean||null} - Value to be set (false: only one file, anything else: multiple files)
+	 */
 	setMultiple(boolean) {
 		if(boolean === false)
 			this.setProperty(JuiInputView.MULTIPLE, false);
