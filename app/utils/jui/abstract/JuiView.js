@@ -35,6 +35,8 @@ JuiView.NAME = 'name';
 JuiView.PLACEHOLDER = 'placeholder';
 JuiView.PRESET = 'preset';
 JuiView.LABEL = 'label';
+JuiView.CLICK = 'click';
+JuiView.LONG_CLICK = 'longclick';
 JuiView.MULTIPLE = 'multiple';
 
 module.exports = JuiView;
