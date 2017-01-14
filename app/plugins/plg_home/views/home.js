@@ -89,6 +89,14 @@ console.log(juiHelper);
 	});
 
 
+
+	let frame = new juiHelper.Frame("http://placehold.it/350x150x");
+	frame.setHtml('<b>Test</b>');
+	frame.setStyle({
+		width: '100%'
+	});
+
+
 	juiHelper.add(headline);
 	juiHelper.nline(2);
 	juiHelper.add(text);
@@ -101,6 +109,7 @@ console.log(juiHelper);
 	juiHelper.add(image);
 	juiHelper.add(select);
 	juiHelper.add(table);
+	juiHelper.add(frame);
 
 	return juiHelper.getArray();
 };
