@@ -22,6 +22,16 @@ class JuiView {
 		this._element[key] = value;
 	}
 
+	appendProperty(key, value) {
+		key = JuiView.getPropertyKey(key);
+		let element = this._element[key];
+
+		if(element === undefined || element === null) this._element[key] = [];
+		else if(!Array.isArray(element)) return false;
+
+		this._element[key].push(value);
+	}
+
 	setValue(value) {
 		if(value) {
 			this.setProperty(JuiView.VALUE, value);
