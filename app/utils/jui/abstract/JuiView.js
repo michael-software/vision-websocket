@@ -35,5 +35,6 @@ JuiView.NAME = 'name';
 JuiView.PLACEHOLDER = 'placeholder';
 JuiView.PRESET = 'preset';
 JuiView.LABEL = 'label';
+JuiView.MULTIPLE = 'multiple';
 
 module.exports = JuiView;
