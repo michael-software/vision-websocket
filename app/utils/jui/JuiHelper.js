@@ -10,6 +10,7 @@ const Checkbox = require('./models/Checkbox.js');
 const File = require('./models/File.js');
 const List = require('./models/List.js');
 const Image = require('./models/Image.js');
+const Select = require('./models/Select.js');
 
 const shorthands = require('./const/shorthands');
 
@@ -28,6 +29,7 @@ class JuiHelper {
 		this.File = File;
 		this.List = List;
 		this.Image = Image;
+		this.Select = Select;
 	}
 
 	getJson() {
@@ -66,5 +68,6 @@ JuiHelper.Checkbox = Checkbox;
 JuiHelper.File = File;
 JuiHelper.List = List;
 JuiHelper.Image = Image;
+JuiHelper.Select = Select;
 
 module.exports = JuiHelper;
