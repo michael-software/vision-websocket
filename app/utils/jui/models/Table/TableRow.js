@@ -1,10 +1,17 @@
 const JuiView = require('../../abstract/JuiView');
 
 class TableRow {
+	/**
+	 * Creates a new TableRow
+	 */
 	constructor() {
 		this.columns = [];
 	}
 
+	/**
+	 * Adds the content of a column to the Row
+	 * @param column {String || Array || JuiView} - Content of the column (String, JuiView, Array of JuiViews)
+	 */
 	add(column) {
 		 if(Array.isArray(column)) {
 		 	let array = [];
@@ -21,6 +28,12 @@ class TableRow {
 		 }
 	}
 
+	/**
+	 * Converts some data to String or Array
+	 * @param column {*} - Data that should be converted
+	 * @returns {*}
+	 * @private
+	 */
 	_getValue(column) {
 		if(column instanceof JuiView) {
 			return column.getArray();

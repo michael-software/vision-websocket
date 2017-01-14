@@ -11,6 +11,10 @@ class Table extends JuiView {
 		this.setProperty(JuiView.TYPE, 'table');
 	}
 
+	/**
+	 * Adds a new row to the table
+	 * @param row {Table.Row} - Row that should be added
+	 */
 	add(row) {
 		if(row instanceof TableRow) {
 			this.appendProperty(JuiView.VALUE, row.columns);
