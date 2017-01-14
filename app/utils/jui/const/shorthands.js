@@ -12,7 +12,8 @@ module.exports = {
 		shadow: 10,
 		placeholder: 11,
 		preset: 12,
-		label: 13
+		label: 13,
+		multiple: 14
 	},
 	values: {
 		type: {
@@ -22,7 +23,11 @@ module.exports = {
 			hline: 4,
 			input: 5,
 			button: 6,
-			checkbox: 7
+			checkbox: 7,
+			file: 8,
+			list: 9,
+			image: 10,
+			select: 11
 		},
 		size: {
 			small: 's',
