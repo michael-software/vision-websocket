@@ -8,6 +8,7 @@ const Input = require('./models/Input.js');
 const Button = require('./models/Button.js');
 const Checkbox = require('./models/Checkbox.js');
 const File = require('./models/File.js');
+const Image = require('./models/Image.js');
 
 const shorthands = require('./const/shorthands');
 
@@ -24,6 +25,7 @@ class JuiHelper {
 		this.Button = Button;
 		this.Checkbox = Checkbox;
 		this.File = File;
+		this.Image = Image;
 	}
 
 	getJson() {
@@ -60,5 +62,6 @@ JuiHelper.Input = Input;
 JuiHelper.Button = Button;
 JuiHelper.Checkbox = Checkbox;
 JuiHelper.File = File;
+JuiHelper.Image = Image;
 
 module.exports = JuiHelper;
