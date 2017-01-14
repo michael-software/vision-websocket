@@ -11,6 +11,7 @@ const File = require('./models/File.js');
 const List = require('./models/List.js');
 const Image = require('./models/Image.js');
 const Select = require('./models/Select.js');
+const Table = require('./models/Table/Table.js');
 
 const shorthands = require('./const/shorthands');
 
@@ -33,6 +34,7 @@ class JuiHelper {
 		this.List = List;
 		this.Image = Image;
 		this.Select = Select;
+		this.Table = Table;
 	}
 
 	/**
@@ -90,5 +92,6 @@ JuiHelper.File = File;
 JuiHelper.List = List;
 JuiHelper.Image = Image;
 JuiHelper.Select = Select;
+JuiHelper.Table = Table;
 
 module.exports = JuiHelper;
