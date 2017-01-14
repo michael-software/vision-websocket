@@ -6,10 +6,18 @@ class JuiView {
 		this._element = {};
 	}
 
+
+	static getPropertyKey(key) {
+		if(shorthands.keys[key]) return shorthands.keys[key];
+
+		return key;
+	}
+
+
 	setProperty(key, value) {
 		key = String(key).toLowerCase();
 		if(shorthands.values[key] && shorthands.values[key][value]) value = shorthands.values[key][value];
-		if(shorthands.keys[key]) key = shorthands.keys[key];
+		key = JuiView.getPropertyKey(key);
 
 		this._element[key] = value;
 	}
