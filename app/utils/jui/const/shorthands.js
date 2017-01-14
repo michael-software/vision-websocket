@@ -27,7 +27,8 @@ module.exports = {
 			file: 8,
 			list: 9,
 			image: 10,
-			select: 11
+			select: 11,
+			table: 12
 		},
 		size: {
 			small: 's',
