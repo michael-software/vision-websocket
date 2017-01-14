@@ -13,7 +13,8 @@ module.exports = {
 		placeholder: 11,
 		preset: 12,
 		label: 13,
-		multiple: 14
+		multiple: 14,
+		style: 15
 	},
 	values: {
 		type: {

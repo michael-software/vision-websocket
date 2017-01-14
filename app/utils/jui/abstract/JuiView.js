@@ -1,4 +1,5 @@
-let shorthands = require('../const/shorthands');
+const shorthands = require('../const/shorthands');
+const Tools = require('../../Tools');
 
 class JuiView {
 	/**
@@ -71,6 +72,74 @@ class JuiView {
 
 		return null;
 	}
+
+	setStyle(style) {
+		if(!style) {
+			this._element.style = null;
+			return;
+		}
+
+		this._element.style = this._element.style || {};
+
+		if(Tools.isNumeric(style.width) || String(style.width).endsWith('%')) {
+			this._element.style.width = style.width;
+		}
+
+		if(Tools.isNumeric(style.height) || String(style.height).endsWith('%')) {
+			this._element.style.height = style.height;
+		}
+
+		if(style.padding) {
+			this._setSpaces('padding', style);
+		}
+
+		if(style.margin) {
+			this._setSpaces('margin', style);
+		}
+
+		if(style.visibility === JuiView.VISIBILITY_AWAY || style.visibility === JuiView.VISIBILITY_INVISIBLE) {
+			this._element.style.visibility = style.visibility;
+		} else if(style.visibility === null) {
+			this._element.style.visibility = undefined;
+		}
+
+		if(style.color) {
+			this._element.style.color = style.color;
+		}
+
+		if(style.background) {
+			this._element.style.background = style.background;
+		}
+
+	}
+
+	_setSpaces(type, style) {
+		if(type !== 'padding' && type !== 'margin') return;
+
+		this._element.style[type] = this._element.style[type] || {};
+
+		if(Tools.isNumeric(style[type])) {
+			this._element.style[type].all = parseFloat(style[type]);
+		} else if(style[type]) {
+			if (Tools.isNumeric(style[type].top)) {
+				this._element.style[type].top = parseFloat(style[type].top);
+			}
+
+			if (Tools.isNumeric(style[type].left)) {
+				this._element.style[type].left = parseFloat(style[type].left);
+			}
+
+			if (Tools.isNumeric(style[type].right)) {
+				this._element.style[type].right = parseFloat(style[type].right);
+			}
+
+			if (Tools.isNumeric(style[type].bottom)) {
+				this._element.style[type].bottom = parseFloat(style[type].bottom);
+			}
+		} else if(style[type] === null) {
+			this._element.style[type] = null;
+		}
+	}
 }
 
 JuiView.TYPE = 'type';
@@ -86,5 +155,8 @@ JuiView.LABEL = 'label';
 JuiView.CLICK = 'click';
 JuiView.LONG_CLICK = 'longclick';
 JuiView.MULTIPLE = 'multiple';
+
+JuiView.VISIBILITY_AWAY = 'away';
+JuiView.VISIBILITY_INVISIBLE = 'invisible';
 
 module.exports = JuiView;
