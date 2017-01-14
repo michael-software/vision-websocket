@@ -14,7 +14,8 @@ module.exports = {
 		preset: 12,
 		label: 13,
 		multiple: 14,
-		style: 15
+		style: 'style',
+		html: 16
 	},
 	values: {
 		type: {
@@ -29,7 +30,8 @@ module.exports = {
 			list: 9,
 			image: 10,
 			select: 11,
-			table: 12
+			table: 12,
+			frame: 13
 		},
 		size: {
 			small: 's',
