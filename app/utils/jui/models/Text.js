@@ -1,34 +1,36 @@
-let JuiView = require('../abstract/JuiView');
+let JuiTextView = require('../abstract/JuiTextView');
 
-module.exports = class Text extends JuiView {
+class Text extends JuiTextView {
+	/**
+	 * Creates a new Text-element
+	 * @param value {String} - Value of the element
+	 */
 	constructor( value ) {
 		super();
 
 		if(value) {
-			this.setProperty(JuiView.TYPE, 'text');
-			this.setProperty(JuiView.VALUE, value);
+			this.setProperty(JuiTextView.TYPE, 'text');
+			this.setProperty(JuiTextView.VALUE, value);
 		}
 	}
 
-	setAlign(align) {
-		align = String(align).toLowerCase();
-
-		if(align === 'left' || align === 'right' || align === 'center') {
-			this.setProperty(JuiView.ALIGN, align);
-		}
-	}
-
-	setShadow(shadow) {
-		if(shadow) {
-			this.setProperty(JuiView.SHADOW, shadow);
-		}
-	}
-
+	/**
+	 * Sets the appearance of the text
+	 * @param appearance {String} - one of Text.<APPEARANCE CONSTANTS>
+	 */
 	setAppearance(appearance) {
 		appearance = String(appearance).toLowerCase();
 
 		if(appearance === 'bold' || appearance === 'italic' || appearance === 'bolditalic') {
-			this.setProperty(JuiView.APPEARANCE, appearance);
+			this.setProperty(JuiTextView.APPEARANCE, appearance);
 		}
 	}
-};
+}
+
+
+Text.APPEARANCE_BOLD = 'bold';
+Text.APPEARANCE_ITALIC = 'italic';
+Text.APPEARANCE_BOLDITALIC = 'bolditalic';
+
+
+module.exports = Text;
