@@ -1,6 +1,9 @@
 let shorthands = require('../const/shorthands');
 let JuiView = require('./JuiView');
 
+/**
+ * Class that should be extended when writing Input elements (e.g. input-fields, date-picker, textarea)
+ */
 class JuiInputView extends JuiView {
 
 	/**

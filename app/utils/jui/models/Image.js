@@ -1,6 +1,9 @@
 let JuiView = require('../abstract/JuiView');
 
-module.exports = class Image extends JuiView {
+/**
+ * Element that can display an Image, allows BASE64-encoded image too
+ */
+class Image extends JuiView {
 	/**
 	 * Creates an new Image-element
 	 * @param src {String} - The source of an image-file
@@ -22,4 +25,6 @@ module.exports = class Image extends JuiView {
 	setSrc(src) {
 		this.setProperty(JuiView.VALUE, src);
 	}
-};
+}
+
+module.exports = Image;

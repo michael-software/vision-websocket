@@ -1,5 +1,8 @@
 let JuiInputView = require('../abstract/JuiInputView');
 
+/**
+ * An element that let you select one of many defined options
+ */
 class Select extends JuiInputView {
 	/**
 	 * Creates a new Select-elemnt

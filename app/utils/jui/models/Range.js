@@ -1,7 +1,10 @@
 const JuiInputView = require('../abstract/JuiInputView');
 const Tools = require('../../Tools');
 
-class Input extends JuiInputView {
+/**
+ * An element that allows you to select a number with a SeekBar
+ */
+class Range extends JuiInputView {
 	/**
 	 * Creates a new Range element
 	 * @param name {String} - The name of the element that will be used when sending data to the server
@@ -59,11 +62,5 @@ class Input extends JuiInputView {
 
 }
 
-Input.TEXTAREA 	= 'textarea';
-Input.PASSWORD 	= 'password';
-Input.NUMBER 	= 'number';
-Input.COLOR 	= 'color';
-Input.DATE 		= 'date';
 
-
-module.exports = Input;
+module.exports = Range;

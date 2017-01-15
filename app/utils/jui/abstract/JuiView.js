@@ -1,6 +1,9 @@
 const shorthands = require('../const/shorthands');
 const Tools = require('../../Tools');
 
+/**
+ * View that needs to be extended by custom elements to use them with JUI
+ */
 class JuiView {
 	/**
 	 * Constructs the new element
@@ -85,71 +88,93 @@ class JuiView {
 		return null;
 	}
 
+	/**
+	 * Sets the style of an element
+	 * @param style {{}} - Needs a style object to be appended
+	 */
 	setStyle(style) {
+		const keys = shorthands.keys;
+		const styleKey = keys.style;
+
 		if(!style) {
-			this._element.style = null;
+			this._element[styleKey] = null;
 			return;
 		}
 
-		this._element.style = this._element.style || {};
+		this._element[styleKey] = this._element[styleKey] || {};
 
 		if(Tools.isNumeric(style.width) || String(style.width).endsWith('%')) {
-			this._element.style.width = style.width;
+			this._element[styleKey][keys.width] = style.width;
 		}
 
 		if(Tools.isNumeric(style.height) || String(style.height).endsWith('%')) {
-			this._element.style.height = style.height;
+			this._element[styleKey][keys.height] = style.height;
 		}
 
 		if(style.padding) {
-			this._setSpaces('padding', style);
+			this._setSpaces(keys.padding, 'padding', style);
 		}
 
 		if(style.margin) {
-			this._setSpaces('margin', style);
+			this._setSpaces(keys.margin, 'margin', style);
 		}
 
 		if(style.visibility === JuiView.VISIBILITY_AWAY || style.visibility === JuiView.VISIBILITY_INVISIBLE) {
-			this._element.style.visibility = style.visibility;
+			this._element[styleKey][keys.visibility] = style.visibility;
 		} else if(style.visibility === null) {
-			this._element.style.visibility = undefined;
+			this._element[styleKey][keys.visibility] = undefined;
 		}
 
 		if(style.color) {
-			this._element.style.color = style.color;
+			this._element[styleKey][keys.color] = style.color;
 		}
 
 		if(style.background) {
-			this._element.style.background = style.background;
+			this._element[styleKey][keys.background] = style.background;
 		}
 
 	}
 
-	_setSpaces(type, style) {
+	/**
+	 * Method which sets padding and margin on the current JuiView
+	 * @param key {String|int} - Key that should be set
+	 * @param type {String} - Type of the Space (e.g. padding, margin)
+	 * @param style {{}} - Style object of the element
+	 * @private
+	 */
+	_setSpaces(key, type, style) {
 		if(type !== 'padding' && type !== 'margin') return;
 
-		this._element.style[type] = this._element.style[type] || {};
+		const all 		= shorthands.keys.all;
+		const left 		= shorthands.keys.left;
+		const right 	= shorthands.keys.right;
+		const top 		= shorthands.keys.top;
+		const bottom 	= shorthands.keys.bottom;
+
+		const styleKey = shorthands.keys.style;
+
+		this._element[styleKey][key] = this._element[styleKey][key] || {};
 
 		if(Tools.isNumeric(style[type])) {
-			this._element.style[type].all = parseFloat(style[type]);
+			this._element[styleKey][key][all] = parseFloat(style[type]);
 		} else if(style[type]) {
-			if (Tools.isNumeric(style[type].top)) {
-				this._element.style[type].top = parseFloat(style[type].top);
+			if (Tools.isNumeric(style[type][top])) {
+				this._element[styleKey][key][top] = parseFloat(style[type].top);
 			}
 
-			if (Tools.isNumeric(style[type].left)) {
-				this._element.style[type].left = parseFloat(style[type].left);
+			if (Tools.isNumeric(style[type][left])) {
+				this._element[styleKey][key][left] = parseFloat(style[type].left);
 			}
 
-			if (Tools.isNumeric(style[type].right)) {
-				this._element.style[type].right = parseFloat(style[type].right);
+			if (Tools.isNumeric(style[type][right])) {
+				this._element[styleKey][key][right] = parseFloat(style[type].right);
 			}
 
-			if (Tools.isNumeric(style[type].bottom)) {
-				this._element.style[type].bottom = parseFloat(style[type].bottom);
+			if (Tools.isNumeric(style[type][bottom])) {
+				this._element[styleKey][key][bottom] = parseFloat(style[type].bottom);
 			}
 		} else if(style[type] === null) {
-			this._element.style[type] = null;
+			this._element[styleKey][key] = null;
 		}
 	}
 }

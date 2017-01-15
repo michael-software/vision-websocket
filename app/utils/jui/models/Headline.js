@@ -1,5 +1,8 @@
 let JuiTextView = require('../abstract/JuiTextView');
 
+/**
+ * Simple Headline that allows basic text styling
+ */
 class Headline extends JuiTextView {
 	/**
 	 * Creates a new Headline-element

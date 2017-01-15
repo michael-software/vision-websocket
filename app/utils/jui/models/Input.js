@@ -1,5 +1,13 @@
 let JuiInputView = require('../abstract/JuiInputView');
 
+/**
+ * Input element that can have different PRESETS like PASSWORD or MULTILINE:
+ * TEXTAREA - Multiline text
+ * PASSWORD - Password input field
+ * NUMBER - Allows simple numbers
+ * COLOR - Lets you select a color
+ * DATE - Lets you select a date
+ */
 class Input extends JuiInputView {
 	/**
 	 * Creates a new Input element

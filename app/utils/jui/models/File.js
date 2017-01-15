@@ -1,5 +1,8 @@
 let JuiInputView = require('../abstract/JuiInputView');
 
+/**
+ * Input-Element that let the user select a file
+ */
 class File extends JuiInputView {
 	/**
 	 * Creates a new File element

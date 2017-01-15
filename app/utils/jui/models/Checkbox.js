@@ -1,6 +1,9 @@
 let JuiInputView = require('../abstract/JuiInputView');
 
-module.exports = class Checkbox extends JuiInputView {
+/**
+ * A Simple Input-Element that shows a Checkbox and a Label
+ */
+class Checkbox extends JuiInputView {
 	/**
 	 * Creates a new Checkbox element
 	 * @param name {String} - The name of the element that will be used when sending data to the server
@@ -30,4 +33,7 @@ module.exports = class Checkbox extends JuiInputView {
 	setChecked(value) {
 		this.setValue(value);
 	}
-};
+}
+
+
+module.exports = Checkbox;

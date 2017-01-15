@@ -1,5 +1,8 @@
 let JuiTextView = require('../abstract/JuiTextView');
 
+/**
+ * Simple Text-Element that allows basic styling of text
+ */
 class Text extends JuiTextView {
 	/**
 	 * Creates a new Text-element

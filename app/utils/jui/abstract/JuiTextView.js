@@ -1,6 +1,9 @@
 let shorthands = require('../const/shorthands');
 let JuiView = require('./JuiView');
 
+/**
+ * Class that should be extended when using elements that uses the default text-functions (align, shadow, size)
+ */
 class JuiTextView extends JuiView {
 
 	/**

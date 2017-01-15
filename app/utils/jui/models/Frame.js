@@ -1,5 +1,8 @@
 const JuiView = require('../abstract/JuiView');
 
+/**
+ * A frame that can display HTML or a website by url
+ */
 class Frame extends JuiView {
 	/**
 	 * Creates a new Frame-element

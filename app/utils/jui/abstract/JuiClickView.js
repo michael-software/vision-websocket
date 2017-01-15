@@ -1,6 +1,9 @@
 let shorthands = require('../const/shorthands');
 let JuiView = require('./JuiView');
 
+/**
+ * Class that should be extended when writing an element that should be clicked (e.g. Button, Link)
+ */
 class JuiClickView extends JuiView {
 	/**
 	 * Sets the click property of the JuiClickView
