@@ -168,6 +168,8 @@ JuiView.CLICK = 'click';
 JuiView.LONG_CLICK = 'longclick';
 JuiView.MULTIPLE = 'multiple';
 JuiView.HTML = 'html';
+JuiView.MIN = 'min';
+JuiView.MAX = 'max';
 
 JuiView.VISIBILITY_AWAY = 'away';
 JuiView.VISIBILITY_INVISIBLE = 'invisible';
