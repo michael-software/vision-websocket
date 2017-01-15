@@ -97,6 +97,12 @@ console.log(juiHelper);
 	});
 
 
+	let range = new juiHelper.Range('hiho--range');
+	range.setValue(5);
+	range.setMin(5);
+	range.setMax(8);
+
+
 	juiHelper.add(headline);
 	juiHelper.nline(2);
 	juiHelper.add(text);
@@ -110,6 +116,7 @@ console.log(juiHelper);
 	juiHelper.add(select);
 	juiHelper.add(table);
 	juiHelper.add(frame);
+	juiHelper.add(range);
 
 	return juiHelper.getArray();
 };
