@@ -14,8 +14,21 @@ module.exports = {
 		preset: 12,
 		label: 13,
 		multiple: 14,
-		style: 'style',
-		html: 16
+		style: 15,
+		html: 16,
+		min: 17,
+		max: 18,
+		padding: 19,
+		margin: 20,
+		background: 21,
+		width: 22,
+		height: 23,
+		visibility: 24,
+		top: 25,
+		left: 26,
+		all: 27,
+		bottom: 28,
+		right: 29
 	},
 	values: {
 		type: {
@@ -32,7 +45,8 @@ module.exports = {
 			select: 11,
 			table: 12,
 			frame: 13,
-			range: 14
+			range: 14,
+			container: 15
 		},
 		size: {
 			small: 's',

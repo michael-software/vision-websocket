@@ -8,16 +8,19 @@ const Input = require('./models/Input.js');
 const Button = require('./models/Button.js');
 const Checkbox = require('./models/Checkbox.js');
 const File = require('./models/File.js');
-const List = require('./models/List.js');
+const List = require('./models/List/List.js');
 const Image = require('./models/Image.js');
 const Select = require('./models/Select.js');
 const Table = require('./models/Table/Table.js');
 const Frame = require('./models/Frame.js');
 const Range = require('./models/Range.js');
+const Container = require('./models/Container.js');
 
 const shorthands = require('./const/shorthands');
 
-
+/**
+ * Class that manages everything with JuiElements and put them in a document
+ */
 class JuiHelper {
 	/**
 	 * Creates a new JuiHelper
@@ -39,6 +42,7 @@ class JuiHelper {
 		this.Table = Table;
 		this.Frame = Frame;
 		this.Range = Range;
+		this.Container = Container;
 	}
 
 	/**
@@ -99,5 +103,6 @@ JuiHelper.Select = Select;
 JuiHelper.Table = Table;
 JuiHelper.Frame = Frame;
 JuiHelper.Range = Range;
+JuiHelper.Container = Container;
 
 module.exports = JuiHelper;
