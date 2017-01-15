@@ -1,4 +1,7 @@
-module.exports = class ListEntry {
+/**
+ * A single entry of the List (optional)
+ */
+class ListEntry {
 	/**
 	 * Creates a new List.Entry
 	 * @param value {String} - Sets the value of the entry
@@ -26,4 +29,6 @@ module.exports = class ListEntry {
 			this.longClick = longClick;
 		}
 	}
-};
+}
+
+module.exports = ListEntry;

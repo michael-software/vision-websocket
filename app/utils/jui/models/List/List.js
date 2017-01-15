@@ -1,6 +1,9 @@
-let JuiView = require('../abstract/JuiView');
+let JuiView = require('../../abstract/JuiView');
 let ListEntry = require('./ListEntry');
 
+/**
+ * List element that can have multiple entries that could be clicked
+ */
 class List extends JuiView {
 	/**
 	 * Creates a new list-element
