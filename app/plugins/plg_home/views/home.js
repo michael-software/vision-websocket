@@ -1,14 +1,12 @@
 module.exports = (juiHelper) => {
 	console.log('home');
 
-console.log(juiHelper);
 	let text = new juiHelper.Text('hi');
 	text.setAlign('right');
 	text.setShadow({
 		color: '#FF0000'
 	});
 	text.setAppearance('bold');
-
 
 
 
@@ -103,6 +101,12 @@ console.log(juiHelper);
 	range.setMax(8);
 
 
+	let container = new juiHelper.Container();
+	container.add(range);
+	container.add(input2);
+	container.add(headline);
+
+
 	juiHelper.add(headline);
 	juiHelper.nline(2);
 	juiHelper.add(text);
@@ -117,6 +121,7 @@ console.log(juiHelper);
 	juiHelper.add(table);
 	juiHelper.add(frame);
 	juiHelper.add(range);
+	juiHelper.add(container);
 
 	return juiHelper.getArray();
 };
