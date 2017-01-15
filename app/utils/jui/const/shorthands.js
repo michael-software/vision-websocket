@@ -31,7 +31,8 @@ module.exports = {
 			image: 10,
 			select: 11,
 			table: 12,
-			frame: 13
+			frame: 13,
+			range: 14
 		},
 		size: {
 			small: 's',

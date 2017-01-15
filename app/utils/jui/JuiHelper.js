@@ -13,6 +13,7 @@ const Image = require('./models/Image.js');
 const Select = require('./models/Select.js');
 const Table = require('./models/Table/Table.js');
 const Frame = require('./models/Frame.js');
+const Range = require('./models/Range.js');
 
 const shorthands = require('./const/shorthands');
 
@@ -37,6 +38,7 @@ class JuiHelper {
 		this.Select = Select;
 		this.Table = Table;
 		this.Frame = Frame;
+		this.Range = Range;
 	}
 
 	/**
@@ -96,5 +98,6 @@ JuiHelper.Image = Image;
 JuiHelper.Select = Select;
 JuiHelper.Table = Table;
 JuiHelper.Frame = Frame;
+JuiHelper.Range = Range;
 
 module.exports = JuiHelper;
