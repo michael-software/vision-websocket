@@ -3,28 +3,26 @@ const mysql        = require('mysql');
 const Domain	   = require('domain');
 
 class DatabaseHelper {
-	constructor(socketHelper) {
-		if(socketHelper.getLoginHelper) { /* TODO: is function ? */
-			this._socketHelper = socketHelper;
-			this.connection = mysql.createConnection({
-				host     : '192.168.2.107',
-				user     : 'local',
-				password : '123456',
-				database : 'vision'
-			});
+	constructor(config, socketHelper) {
+		console.log(config);
 
-			// this.connection = mysql.createConnection({
-			// 	host     : '127.0.0.1',
-			// 	user     : 'local',
-			// 	password : '123456',
-			// 	database : 'vision'
-			// });
-		}
+		this.connection = mysql.createConnection({
+			host     : config.database.host,
+			user     : config.database.user,
+			password : config.database.password,
+			database : config.database.database
+		});
 	}
 
 	connect() {
 		return new Promise((resolve, reject) => {
-			this.connection.connect(null, resolve);
+			this.connection.connect(null, (err) => {
+				if(err) {
+					return reject(err);
+				}
+
+				return resolve();
+			});
 
 			setTimeout(reject, 10000);
 		});
@@ -32,6 +30,10 @@ class DatabaseHelper {
 
 	disconnect() {
 		this.connection.end();
+	}
+
+	setPlugin(pluginId) {
+		this.plugin = pluginId;
 	}
 
 	query(value) {
@@ -44,6 +46,18 @@ class DatabaseHelper {
 				});
 
 				domain.run(() => {
+					if(value.sql) {
+						if (value.sql.match(/##pluginDB##/g) && !this.plugin) throw "No plugin specified";
+
+						value.sql = value.sql.replace(/##pluginDB##/g, `${this.praefix || ''}${this.plugin}`);
+						value.sql = value.sql.replace(/##praefix##/g, `${this.praefix || ''}`);
+					} else {
+						if (value.match(/##pluginDB##/g) && !this.plugin) throw "No plugin specified";
+
+						value = value.replace(/##pluginDB##/g, `${this.praefix || ''}${this.plugin}`);
+						value = value.replace(/##praefix##/g, `${this.praefix || ''}`);
+					}
+
 					this.connection.query(value, (err, rows, fields) => {
 						if (err) throw err;
 
@@ -61,8 +75,8 @@ class DatabaseHelper {
 		});
 	}
 
-	get() {
-
+	setPraefix(praefix) {
+		this.praefix = String(praefix) + '_';
 	}
 }
 
