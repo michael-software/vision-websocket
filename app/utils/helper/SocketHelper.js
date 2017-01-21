@@ -46,6 +46,8 @@ class SocketHelper {
         if(data == 'true') {
             this.pluginHelper.getPluginList(this.user).then((data) => {
                 this.socket.emit('plugins', data);
+            }).catch((error) => {
+				this.socket.emit('plugins', error.stack || error);
             });
         }
     }
@@ -59,6 +61,15 @@ class SocketHelper {
                     request: data,
                     response: response
                 });
+            }).catch((error) => {
+                if(error instanceof Error) {
+                    error = error.stack;
+                }
+
+				this.socket.emit('plugin', {
+					request: data,
+					response: String(error)
+				});
             });
         }
     }
