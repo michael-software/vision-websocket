@@ -98,7 +98,9 @@ class SocketHelper {
     }
 
 	getDatabaseHelper() {
-        return this.databaseHelper;
+		let DatabaseHelper = require('./DatabaseHelper.js');
+
+        return new DatabaseHelper(this.serverConfig, this);
     }
 
     getSocket() {
