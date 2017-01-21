@@ -32,6 +32,10 @@ class DatabaseHelper {
 		this.connection.end();
 	}
 
+	setPlugin(pluginId) {
+		this.plugin = pluginId;
+	}
+
 	query(value) {
 		return new Promise((resolve, reject) => {
 			this.connect().then(() => {
@@ -59,8 +63,8 @@ class DatabaseHelper {
 		});
 	}
 
-	get() {
-
+	setPraefix(praefix) {
+		this.praefix = String(praefix) + '_';
 	}
 }
 
