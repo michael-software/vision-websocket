@@ -45,7 +45,7 @@ class SocketHelper {
 
     getPlugins(data) {
         if(data == 'true') {
-            this.pluginHelper.getPlugins(this.user).then((data) => {
+            this.pluginHelper.getPluginList(this.user).then((data) => {
                 this.socket.emit('plugins', data);
             });
         }

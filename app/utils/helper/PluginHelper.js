@@ -21,7 +21,7 @@ class PluginHelper {
 	setLoginHelper(loginHelper) {
 	}
 
-	getPlugins(data) {
+	getPluginList(data) {
 		//console.log('this', data);
 
 		return new Promise((resolve, reject) => {
