@@ -1,5 +1,5 @@
 const JuiInputView = require('../abstract/JuiInputView');
-const Tools = require('../../Tools');
+const Tools = require('../Tools');
 
 /**
  * An element that allows you to select a number with a SeekBar

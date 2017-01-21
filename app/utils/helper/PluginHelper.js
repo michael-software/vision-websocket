@@ -2,12 +2,12 @@ const fetch = require('node-fetch');
 const FormData = require('form-data');
 const fs = require('fs');
 
-const Tools = require('../Tools');
-
 const plugins = {
 	'plg_home': {
 		name: 'home',
 		id: 'plg_home'
+
+const Tools = require('../jui/Tools');
 	}
 };
 

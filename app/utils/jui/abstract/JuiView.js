@@ -1,5 +1,5 @@
 const shorthands = require('../const/shorthands');
-const Tools = require('../../Tools');
+const Tools = require('../Tools');
 
 /**
  * View that needs to be extended by custom elements to use them with JUI
