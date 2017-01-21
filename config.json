@@ -1,3 +1,11 @@
 {
-  "port": 8080
+	"database": {
+		"host":"localhost",
+		"user":"local",
+		"password":"123456",
+		"database":"vision"
+	},
+	"ports": {
+		"websocket": 3000
+	}
 }
