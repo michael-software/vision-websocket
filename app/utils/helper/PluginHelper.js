@@ -1,15 +1,26 @@
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 const fs = require('fs');
-
-const plugins = {
-	'plg_home': {
-		name: 'home',
-		id: 'plg_home'
+const JuiHelper = require('../CustomJuiHelper');
+const JuiViewBuilder = require('../jui/abstract/JuiViewBuilder');
 
 const Tools = require('../jui/Tools');
+
+
+let plugins = new Map();
+plugins.set('plg_home', {
+	name: 'home',
+	id: 'plg_home',
+	getPluginName: function() {
+		return 'Home';
+	},
+	getPluginId: function() {
+		return 'plg_home';
+	},
+	getImage: function() {
+		return 'fa-home';
 	}
-};
+});
 
 
 class PluginHelper {
@@ -133,9 +144,13 @@ class PluginHelper {
 		});
 	}
 
+	getPlugins() {
+		return plugins;
+	}
+
 
 	isInstalled(name) {
-		return plugins[name];
+		return plugins.has(name);
 	}
 
 
