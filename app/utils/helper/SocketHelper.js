@@ -1,20 +1,19 @@
-const PluginHelper  = require('./PluginHelper.js');
+const PluginHelper  = require('./PluginHelper/PluginHelper.js');
 const SearchHelper  = require('./SearchHelper.js');
 const UploadHelper  = require('./UploadHelper.js');
-const DatabaseHelper= require('./DatabaseHelper.js');
 const UserHelper    = require('./UserHelper/UserHelper.js');
 const fs            = require('fs');
 const fetch         = require('node-fetch');
 const FormData      = require('form-data');
 
 class SocketHelper {
-    constructor(socket) {
+    constructor(socket, serverConfig, plugins, userList) {
         this.uploadHelper = new UploadHelper(this);
-        this.pluginHelper = new PluginHelper(this);
+        this.pluginHelper = new PluginHelper(this, plugins);
         this.searchHelper = new SearchHelper();
-        this.databaseHelper = new DatabaseHelper(this);
-        this.userHelper = new UserHelper(this);
+        this.userHelper = new UserHelper(this, userList);
         this.socket = socket;
+        this.serverConfig = serverConfig;
 
 
         socket.on('plugins', this.getPlugins.bind(this));
