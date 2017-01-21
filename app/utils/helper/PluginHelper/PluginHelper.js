@@ -1,32 +1,17 @@
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 const fs = require('fs');
-const JuiHelper = require('../CustomJuiHelper');
-const JuiViewBuilder = require('../jui/abstract/JuiViewBuilder');
+const JuiHelper = require('../../CustomJuiHelper');
+const JuiViewBuilder = require('../../jui/custom/JuiViewBuilder');
 
-const Tools = require('../jui/Tools');
-
-
-let plugins = new Map();
-plugins.set('plg_home', {
-	name: 'home',
-	id: 'plg_home',
-	getPluginName: function() {
-		return 'Home';
-	},
-	getPluginId: function() {
-		return 'plg_home';
-	},
-	getImage: function() {
-		return 'fa-home';
-	}
-});
+const Tools = require('../../jui/Tools');
 
 
 class PluginHelper {
-	constructor(socketHelper) {
+	constructor(socketHelper, plugins) {
 		this.socketHelper = socketHelper;
 		this.uploadHelper = socketHelper.getUploadHelper();
+		this.plugins = plugins;
 	}
 
 	setLoginHelper(loginHelper) {
@@ -56,7 +41,7 @@ class PluginHelper {
 		});
 	}
 
-	getPlugin(name, view, param, formData) {
+	getPlugin(name, view, params, formData) {
 		//console.log('this', data);
 
 		return new Promise((resolve, reject) => {
@@ -66,17 +51,25 @@ class PluginHelper {
 				try {
 					let juiHelper = new JuiHelper();
 
-					let imported = require('../../plugins/' + name + '/views/home.js');
+					let imported = require(`../../../plugins/${name}/views/${view || 'home'}.js`);
 
 					if(imported.prototype instanceof JuiViewBuilder) {
 						let builder = new imported(juiHelper, this, this.socketHelper.getUserHelper());
+						builder.setPluginId(name);
+						builder.setParameters(params);
+						builder.setFormData(formData);
 
-						resolve({data: builder.render()});
+						let render = builder.startRender();
+
+						render.then((data) => {
+							resolve({data: data});
+						});
+
 					} else if(imported.call) {
 						resolve({data: imported(juiHelper)});
 					}
 				} catch(error) {
-					reject(error);
+					return reject(error.stack || error);
 				}
 
 			} else {
@@ -89,8 +82,8 @@ class PluginHelper {
 					if (view) {
 						url += `&page=${view}`;
 					}
-					if (param) {
-						url += `&cmd=${param}`;
+					if (params) {
+						url += `&cmd=${params}`;
 					}
 
 
@@ -151,12 +144,30 @@ class PluginHelper {
 	}
 
 	getPlugins() {
-		return plugins;
+		return this.plugins;
 	}
 
+	getDatabaseHelper() {
+		return this.socketHelper.getDatabaseHelper();
+	}
+
+	install(pluginId) {
+		try {
+			let imported = require('../../../plugins/' + pluginId + '/install.js');
+
+			if(imported.call) {
+				let dbHelper = this.socketHelper.getDatabaseHelper();
+				dbHelper.setPlugin(pluginId);
+
+				imported(dbHelper);
+			}
+		} catch(error) {
+			console.log(error);
+		}
+	}
 
 	isInstalled(name) {
-		return plugins.has(name);
+		return this.plugins.has(name);
 	}
 
 
