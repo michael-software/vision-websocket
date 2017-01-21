@@ -16,7 +16,13 @@ class DatabaseHelper {
 
 	connect() {
 		return new Promise((resolve, reject) => {
-			this.connection.connect(null, resolve);
+			this.connection.connect(null, (err) => {
+				if(err) {
+					return reject(err);
+				}
+
+				return resolve();
+			});
 
 			setTimeout(reject, 10000);
 		});
