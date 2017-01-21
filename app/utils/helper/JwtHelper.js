@@ -1,7 +1,7 @@
 var jwt = require('jsonwebtoken');
 const ALGORITHM = 'HS256';
 const TOLERANCE = 2592000; // 30 days
-const EXPIRES = 60; // default: 7200
+const EXPIRES = 7200; // default: 7200
 
 class JwtHelper {
 	constructor(socketHelper) {

@@ -12,7 +12,23 @@ module.exports = {
 		shadow: 10,
 		placeholder: 11,
 		preset: 12,
-		label: 13
+		label: 13,
+		multiple: 14,
+		style: 15,
+		html: 16,
+		min: 17,
+		max: 18,
+		padding: 19,
+		margin: 20,
+		background: 21,
+		width: 22,
+		height: 23,
+		visibility: 24,
+		top: 25,
+		left: 26,
+		all: 27,
+		bottom: 28,
+		right: 29
 	},
 	values: {
 		type: {
@@ -22,7 +38,15 @@ module.exports = {
 			hline: 4,
 			input: 5,
 			button: 6,
-			checkbox: 7
+			checkbox: 7,
+			file: 8,
+			list: 9,
+			image: 10,
+			select: 11,
+			table: 12,
+			frame: 13,
+			range: 14,
+			container: 15
 		},
 		size: {
 			small: 's',

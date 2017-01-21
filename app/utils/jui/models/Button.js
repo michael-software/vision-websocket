@@ -1,6 +1,13 @@
 let JuiClickView = require('../abstract/JuiClickView');
 
-module.exports = class Button extends JuiClickView {
+/**
+ * Simple button that can handle click events
+ */
+class Button extends JuiClickView {
+	/**
+	 * Creates a new Button
+	 * @param value {String} - Value to set to the button
+	 */
 	constructor( value ) {
 		super();
 
@@ -9,4 +16,6 @@ module.exports = class Button extends JuiClickView {
 			this.setProperty(JuiClickView.VALUE, value);
 		}
 	}
-};
+}
+
+module.exports = Button;
