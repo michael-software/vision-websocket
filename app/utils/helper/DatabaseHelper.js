@@ -3,23 +3,15 @@ const mysql        = require('mysql');
 const Domain	   = require('domain');
 
 class DatabaseHelper {
-	constructor(socketHelper) {
-		if(socketHelper.getLoginHelper) { /* TODO: is function ? */
-			this._socketHelper = socketHelper;
-			this.connection = mysql.createConnection({
-				host     : '192.168.2.107',
-				user     : 'local',
-				password : '123456',
-				database : 'vision'
-			});
+	constructor(config, socketHelper) {
+		console.log(config);
 
-			// this.connection = mysql.createConnection({
-			// 	host     : '127.0.0.1',
-			// 	user     : 'local',
-			// 	password : '123456',
-			// 	database : 'vision'
-			// });
-		}
+		this.connection = mysql.createConnection({
+			host     : config.database.host,
+			user     : config.database.user,
+			password : config.database.password,
+			database : config.database.database
+		});
 	}
 
 	connect() {
