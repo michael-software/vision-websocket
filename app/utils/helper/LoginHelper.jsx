@@ -40,41 +40,6 @@ class LoginHelper {
                 }
             });
 		}
-
-
-        // return fetch(`${server}/api/login.php`, {
-        //     headers: {
-        //         Authorization: `bearer ${authtoken}`
-        //     }
-        // }).then(function(data) {
-        //     return data.text();
-		//
-        //     if(data.status == 401) {
-        //         throw new Error('Bad message');
-        //     } else {
-        //         return data.json();
-        //     }
-        // }).then((data) => {
-        //     console.log(data);
-        //     this.isLoggedIn = true;
-		//
-        //     data.server = server;
-        //     data.token = authtoken;
-		//
-		//
-        //     this.parseLoginInfo(data);
-		//
-        //     if(this.$login) {
-        //         this.$login(data);
-        //     }
-        // }).catch((error) => {
-		//
-        //     if(this.$unauthorized) {
-        //         this.$unauthorized(error);
-        //     }
-		//
-        //     console.warn(error);
-        // });
     }
 
     loginCredentials(server, username, password) {
