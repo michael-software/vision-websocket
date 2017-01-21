@@ -64,13 +64,19 @@ class PluginHelper {
 			if(this.isInstalled(name)) {
 
 				try {
-					const JuiHelper = require('../jui/JuiHelper.js');
 					let juiHelper = new JuiHelper();
 
-					var imported = require('../../plugins/' + name + '/views/home.js');
-					resolve({data: imported(juiHelper)});
+					let imported = require('../../plugins/' + name + '/views/home.js');
+
+					if(imported.prototype instanceof JuiViewBuilder) {
+						let builder = new imported(juiHelper, this, this.socketHelper.getUserHelper());
+
+						resolve({data: builder.render()});
+					} else if(imported.call) {
+						resolve({data: imported(juiHelper)});
+					}
 				} catch(error) {
-					console.log('Error', error);
+					reject(error);
 				}
 
 			} else {
