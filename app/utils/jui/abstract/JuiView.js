@@ -111,11 +111,11 @@ class JuiView {
 			this._element[styleKey][keys.height] = style.height;
 		}
 
-		if(style.padding) {
+		if(style.padding || style.padding === 0) {
 			this._setSpaces(keys.padding, 'padding', style);
 		}
 
-		if(style.margin) {
+		if(style.margin || style.margin === 0) {
 			this._setSpaces(keys.margin, 'margin', style);
 		}
 
@@ -158,19 +158,19 @@ class JuiView {
 		if(Tools.isNumeric(style[type])) {
 			this._element[styleKey][key][all] = parseFloat(style[type]);
 		} else if(style[type]) {
-			if (Tools.isNumeric(style[type][top])) {
+			if (Tools.isNumeric(style[type].top)) {
 				this._element[styleKey][key][top] = parseFloat(style[type].top);
 			}
 
-			if (Tools.isNumeric(style[type][left])) {
+			if (Tools.isNumeric(style[type].left)) {
 				this._element[styleKey][key][left] = parseFloat(style[type].left);
 			}
 
-			if (Tools.isNumeric(style[type][right])) {
+			if (Tools.isNumeric(style[type].right)) {
 				this._element[styleKey][key][right] = parseFloat(style[type].right);
 			}
 
-			if (Tools.isNumeric(style[type][bottom])) {
+			if (Tools.isNumeric(style[type].bottom)) {
 				this._element[styleKey][key][bottom] = parseFloat(style[type].bottom);
 			}
 		} else if(style[type] === null) {
