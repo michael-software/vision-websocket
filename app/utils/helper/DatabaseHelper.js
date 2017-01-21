@@ -46,6 +46,18 @@ class DatabaseHelper {
 				});
 
 				domain.run(() => {
+					if(value.sql) {
+						if (value.sql.match(/##pluginDB##/g) && !this.plugin) throw "No plugin specified";
+
+						value.sql = value.sql.replace(/##pluginDB##/g, `${this.praefix || ''}${this.plugin}`);
+						value.sql = value.sql.replace(/##praefix##/g, `${this.praefix || ''}`);
+					} else {
+						if (value.match(/##pluginDB##/g) && !this.plugin) throw "No plugin specified";
+
+						value = value.replace(/##pluginDB##/g, `${this.praefix || ''}${this.plugin}`);
+						value = value.replace(/##praefix##/g, `${this.praefix || ''}`);
+					}
+
 					this.connection.query(value, (err, rows, fields) => {
 						if (err) throw err;
 
