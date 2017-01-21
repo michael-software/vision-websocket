@@ -1,4 +1,4 @@
-const JuiViewBuilder = require('../../../utils/jui/abstract/JuiViewBuilder');
+const JuiViewBuilder = require('../../../utils/jui/custom/JuiViewBuilder');
 
 module.exports = class Builder extends JuiViewBuilder {
 	render() {
@@ -10,6 +10,12 @@ module.exports = class Builder extends JuiViewBuilder {
 		console.log('home');
 
 		let headline = new juiHelper.Headline(`Hallo ${currentUser.getUsername()}`);
+		headline.setStyle({
+			margin: {
+				top: 0,
+				bottom: 10
+			}
+		});
 
 
 		let container = new juiHelper.Container();
@@ -25,7 +31,7 @@ module.exports = class Builder extends JuiViewBuilder {
 		let buttonList = new juiHelper.ButtonList();
 		let plugins = pluginHelper.getPlugins().values();
 		for(let plugin of plugins){
-			buttonList.add(plugin.getPluginName(), plugin.getImage(), juiHelper.Action.openPlugin(plugin.getPluginId()));
+			buttonList.add(plugin.getName(), plugin.getIcon(), juiHelper.Action.openPlugin(plugin.getId()));
 		}
 
 
