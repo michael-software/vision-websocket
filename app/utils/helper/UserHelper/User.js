@@ -2,6 +2,7 @@ module.exports = class {
 	constructor(userObject, cpermissions) {
 		this.user = userObject;
 		this.customPermissions = new Map();
+		this.sockets = [];
 	}
 
 	getUsername() {
@@ -50,5 +51,28 @@ module.exports = class {
 		}
 
 		return false;
+	}
+
+	addSocket( socketId ) {
+		if(this.sockets.indexOf(socketId) === -1) {
+			this.sockets.push(socketId);
+			return true;
+		}
+
+		return false;
+	}
+
+	removeSocket( socketId ) {
+		let index = this.sockets.indexOf(socketId);
+		if(index !== -1) {
+			this.sockets.splice(index, 1);
+			return true;
+		}
+
+		return false;
+	}
+
+	getSockets() {
+		return this.sockets;
 	}
 };

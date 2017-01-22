@@ -31,6 +31,14 @@ class JuiViewBuilder {
 		return databaseHelper;
 	}
 
+	getNotificationHelper() {
+		if(this.notificationHelper) return this.notificationHelper;
+
+		this.notificationHelper = this.pluginHelper.socketHelper.getNotificationHelper();
+
+		return this.notificationHelper;
+	}
+
 
 
 	setPluginId(pluginId) {
@@ -72,7 +80,7 @@ class JuiViewBuilder {
 
 
 	_getRenderPromise(data) {
-		if(data instanceof Promise) return data;
+		if (data instanceof Promise) return data;
 
 		return Promise.resolve(data);
 	}
