@@ -14,7 +14,7 @@ class NotificationHelper extends CommunicationHelper {
 		let user = this.userHelper.getUser(userId);
 
 		if(user && notification instanceof Notification) {
-			super.send(user, notification)
+			super.send(user, 'notification', notification)
 		}
 	}
 }

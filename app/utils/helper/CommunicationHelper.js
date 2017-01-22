@@ -4,11 +4,11 @@ class CommunicationHelper {
 		this.socket = socket;
 	}
 
-	send(user, object) {
+	send(user, type, object) {
 		let sockets = user.getSockets();
 
 		for(let i = 0, z = sockets.length; i < z; i++) {
-			this.socket.to(sockets[i]).emit(object);
+			this.socket.to(sockets[i]).emit(type, object);
 		}
 	}
 }
