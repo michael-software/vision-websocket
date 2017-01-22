@@ -1,4 +1,5 @@
 const JuiViewBuilder = require('../../../utils/jui/custom/JuiViewBuilder');
+const NotificationHelper = require('../../../utils/helper/NotificationHelper/NotificationHelper');
 
 const MESSAGE_CONTAINER_PADDING = 10;
 const MESSAGE_CONTAINER_MARGIN = 10;
@@ -21,12 +22,18 @@ module.exports = class Builder extends JuiViewBuilder {
 						VALUES
 						(?, ?, ?)`;
 
-		this.getDatabaseHelper().query({
+		return this.getDatabaseHelper().query({
 			sql: query,
 			values: [message, currentUser.getId(), user.getId()]
-		});
+		}).then(() => {
+			let notificationHelper = this.getNotificationHelper();
 
-		console.log('got message', message);
+			let notification = new notificationHelper.Notification("Neue Nachricht", "Sie haben eine neue Nachricht");
+			notificationHelper.send(user.getId(), notification);
+
+
+			return this.render();
+		});
 	}
 
 	render() {
@@ -136,7 +143,7 @@ module.exports = class Builder extends JuiViewBuilder {
 			}
 		});
 
-		let time = new juiHelper.Text(data.timestamp);
+		let time = new juiHelper.Text( JuiViewBuilder.Tools.getDateString( 'j.m.Y - H:i', new Date(data.timestamp) ) );
 		time.setStyle({
 			color: '#666666'
 		});
@@ -159,7 +166,7 @@ module.exports = class Builder extends JuiViewBuilder {
 				}
 			});
 		} else {
-			time.setAlign('right');
+			time.setAlign('left');
 		}
 
 
