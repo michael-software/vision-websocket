@@ -68,7 +68,12 @@ class SocketHelper {
 
 				this.socket.emit('plugin', {
 					request: data,
-					response: String(error)
+					response: {
+					    head:{
+					        status: 500
+                        },
+                        data: String(error)
+					}
 				});
             });
         }

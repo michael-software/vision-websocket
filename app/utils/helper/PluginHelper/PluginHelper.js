@@ -63,13 +63,15 @@ class PluginHelper {
 
 						render.then((data) => {
 							resolve({data: data});
+						}).catch((error) => {
+							resolve(error);
 						});
 
 					} else if(imported.call) {
 						resolve({data: imported(juiHelper)});
 					}
 				} catch(error) {
-					return reject(error.stack || error);
+					return reject(error);
 				}
 
 			} else {
