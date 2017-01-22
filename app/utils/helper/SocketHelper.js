@@ -1,10 +1,12 @@
-const PluginHelper  = require('./PluginHelper/PluginHelper.js');
-const SearchHelper  = require('./SearchHelper.js');
-const UploadHelper  = require('./UploadHelper.js');
-const UserHelper    = require('./UserHelper/UserHelper.js');
 const fs            = require('fs');
 const fetch         = require('node-fetch');
 const FormData      = require('form-data');
+
+const PluginHelper          = require('./PluginHelper/PluginHelper.js');
+const SearchHelper          = require('./SearchHelper.js');
+const UploadHelper          = require('./UploadHelper.js');
+const NotificationHelper    = require('./NotificationHelper/NotificationHelper.js');
+const UserHelper            = require('./UserHelper/UserHelper.js');
 
 class SocketHelper {
     constructor(socket, serverConfig, plugins, userList) {
@@ -106,6 +108,10 @@ class SocketHelper {
 		let DatabaseHelper = require('./DatabaseHelper.js');
 
         return new DatabaseHelper(this.serverConfig, this);
+    }
+
+	getNotificationHelper() {
+        return new NotificationHelper(this.socket, this.serverConfig, this.userHelper);
     }
 
     getSocket() {
