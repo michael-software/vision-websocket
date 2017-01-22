@@ -39,6 +39,8 @@ serverHelper.init().then((data) => {
 			console.info('\x1b[36m%s\x1b[0m', 'user connected');
 
 			socket.on('disconnect', function () {
+				if(loginHelper.currentUser)
+					loginHelper.currentUser.removeSocket( socket.id );
 				console.info('\x1b[36m%s\x1b[0m', 'user disconnected');
 			});
 
