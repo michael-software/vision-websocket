@@ -29,6 +29,7 @@ module.exports = class Builder extends JuiViewBuilder {
 			let notificationHelper = this.getNotificationHelper();
 
 			let notification = new notificationHelper.Notification("Neue Nachricht", "Sie haben eine neue Nachricht");
+			notification.setClick( this.getJuiHelper().Action.openPlugin(this, 'chat', currentUser.getId()) );
 			notificationHelper.send(user.getId(), notification);
 
 
