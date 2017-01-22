@@ -10,6 +10,8 @@ module.exports = class UserHelper {
 	getCurrentUser() {
 		let loginHelper = this.socketHelper.getLoginHelper();
 
+		if(loginHelper.currentUser) return loginHelper.currentUser;
+
 		return new User({
 			id: loginHelper.getId(),
 			server: loginHelper.getServer(),
