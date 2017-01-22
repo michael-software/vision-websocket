@@ -99,12 +99,18 @@ class LoginHelper {
     }
 
     parseLoginInfo(data) {
-        if(data.username && data.token && data.server) {
-            this.username = data.username;
-            this.token = data.token;
-            this.server = data.server;
-            this.id = data.id;
-        }
+    	if(data.id && data.token && data.server) {
+    		this.currentUser = this.socketHelper.getUserHelper().getUser(data.id);
+
+    		if(this.currentUser) {
+				this.username = this.currentUser.getUsername();
+				this.token = data.token;
+				this.server = data.server;
+				this.id = this.currentUser.getId();
+
+				this.currentUser.addSocket( this.socketHelper.getSocket().id );
+			}
+		}
     }
 
     getId() {
