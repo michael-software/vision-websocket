@@ -75,4 +75,11 @@ module.exports = class {
 	getSockets() {
 		return this.sockets;
 	}
+
+	getObject() {
+		return {
+			user: this.user,
+			customPermissions: [...this.customPermissions]
+		};
+	}
 };
