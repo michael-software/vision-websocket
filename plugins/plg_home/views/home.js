@@ -1,4 +1,4 @@
-const JuiViewBuilder = require('../../../utils/jui/custom/JuiViewBuilder');
+const JuiViewBuilder = require('../../../app/utils/jui/custom/JuiViewBuilder');
 
 module.exports = class Builder extends JuiViewBuilder {
 	render() {

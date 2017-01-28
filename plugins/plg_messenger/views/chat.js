@@ -1,5 +1,5 @@
-const JuiViewBuilder = require('../../../utils/jui/custom/JuiViewBuilder');
-const NotificationHelper = require('../../../utils/helper/NotificationHelper/NotificationHelper');
+const JuiViewBuilder = require('../../../app/utils/jui/custom/JuiViewBuilder');
+const NotificationHelper = require('../../../app/utils/helper/NotificationHelper/NotificationHelper');
 
 const MESSAGE_CONTAINER_PADDING = 10;
 const MESSAGE_CONTAINER_MARGIN = 10;
