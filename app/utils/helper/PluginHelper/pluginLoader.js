@@ -1,9 +1,12 @@
 const fs = require('fs');
+const path = require('path');
 const Plugin = require('./Plugin');
+
+const __main = path.dirname( path.dirname(require.main.filename) );
 
 let readConfig = function(pluginId) {
 	return new Promise((resolve, reject) => {
-		fs.readFile(`./app/plugins/${pluginId}/manifest.json`, function read(err, data) {
+		fs.readFile(`${__main}/plugins/${pluginId}/manifest.json`, function read(err, data) {
 			if (err) {
 				//console.log(err);
 				return resolve(null);
@@ -32,7 +35,8 @@ module.exports = function() {
 		let pluginMap = new Map();
 		let promiseArray = [];
 
-		fs.readdir('./app/plugins', (err, plugins) => {
+		fs.readdir(`${__main}/plugins`, (err, plugins) => {
+			if(plugins)
 			plugins.forEach(pluginId => {
 				let data = readConfig(pluginId);
 				promiseArray.push(data);
@@ -45,7 +49,7 @@ module.exports = function() {
 					for(let i = 0, z = values.length; i < z; i++) {
 						let plugin = values[i];
 
-						if(plugin.getId()) {
+						if(plugin && plugin.getId()) {
 							pluginMap.set(plugin.getId(), plugin);
 						}
 					}

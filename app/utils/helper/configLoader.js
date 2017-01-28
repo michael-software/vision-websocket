@@ -1,4 +1,7 @@
 const fs = require('fs');
+const path = require('path');
+
+const __main = path.dirname( path.dirname(require.main.filename) );
 
 const DEFAULT_CONFIG = `{
 	"database": {
@@ -12,13 +15,14 @@ const DEFAULT_CONFIG = `{
 	}
 }`;
 
+
 module.exports = function() {
 	return new Promise((resolve, reject) => {
-		fs.readFile(`./config.json`, function read(err, data) {
+		fs.readFile(`${__main}/config.json`, function read(err, data) {
 			if (err) {
 				if(err.code === 'ENOENT') {
 					var fs = require('fs');
-					fs.writeFile("./config.json", DEFAULT_CONFIG, function(err) {
+					fs.writeFile(`${__main}/config.json`, DEFAULT_CONFIG, function(err) {
 						if(err) {
 							return reject(err);
 						}

@@ -51,7 +51,7 @@ class PluginHelper {
 				try {
 					let juiHelper = new JuiHelper();
 
-					let imported = require(`../../../plugins/${name}/views/${view || 'home'}.js`);
+					let imported = require(`../../../../plugins/${name}/views/${view || 'home'}.js`);
 
 					if(imported.prototype instanceof JuiViewBuilder) {
 						let builder = new imported(juiHelper, this, this.socketHelper.getUserHelper());
@@ -155,7 +155,7 @@ class PluginHelper {
 
 	install(pluginId) {
 		try {
-			let imported = require('../../../plugins/' + pluginId + '/install.js');
+			let imported = require('../../../../plugins/' + pluginId + '/install.js');
 
 			if(imported.call) {
 				let dbHelper = this.socketHelper.getDatabaseHelper();
