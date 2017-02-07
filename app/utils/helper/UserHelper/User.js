@@ -46,8 +46,8 @@ module.exports = class {
 			return this.customPermissions.get(name);
 		}
 
-		if(this.permissions && this.permissions[name] !== undefined) {
-			return this.permissions[name];
+		if(this.user.permissions && this.user.permissions[name] !== undefined) {
+			return (this.user.permissions[name] === 1);
 		}
 
 		return false;
