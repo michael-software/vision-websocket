@@ -1,4 +1,4 @@
-const DatabaseHelper = require('../DatabaseHelper');
+const DatabaseHelper = require('../DatabaseHelper/DatabaseHelper');
 const User  = require('./User');
 
 module.exports = function(config) {
