@@ -10,6 +10,8 @@ const SocketHelper = require('./utils/helper/SocketHelper');
 
 const ServerHelper = require('./utils/helper/ServerHelper');
 
+const RestManager = require('./rest/RestManager.js');
+
 var __dirname = './public/';
 
 
@@ -26,6 +28,9 @@ serverHelper.init().then((data) => {
 		let serverConfig = data.config;
 		let userList = data.userList;
 		let pluginList = data.pluginList;
+
+
+		let restManager = new RestManager(app, data);
 
 
 		http.listen(3000, function () {
