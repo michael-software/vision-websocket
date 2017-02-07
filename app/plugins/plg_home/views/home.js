@@ -9,12 +9,9 @@ module.exports = class Builder extends JuiViewBuilder {
 		let pluginHelper = this.getPluginHelper();
 		console.log('home');
 
-		let headline = new juiHelper.Headline(`Hallo ${currentUser.getUsername()}`);
+		let headline = new juiHelper.Headline(`Hallo ${currentUser.getDisplayName()}`);
 		headline.setStyle({
-			margin: {
-				top: 0,
-				bottom: 10
-			}
+			margin: 0
 		});
 
 
@@ -25,7 +22,6 @@ module.exports = class Builder extends JuiViewBuilder {
 			background: '#AA999999'
 		});
 		container.add(headline);
-		container.add(`Sie sind verbunden mit: ${currentUser.getServer()}`);
 
 
 		let buttonList = new juiHelper.ButtonList();
