@@ -2,6 +2,8 @@ let JuiView = require('../abstract/JuiView');
 let Text = require('../models/Text');
 let Tools = require('../Tools');
 
+const shorthands = require('../const/shorthands');
+
 /**
  * An element that can contain multiple other elements
  */
@@ -30,6 +32,17 @@ class Container extends JuiView {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Adds a new line to the jui
+	 * @param count {int} - How many new lines should be inserted
+	 */
+	nline(count) {
+		if(!count) count = 1;
+		for(let i = 0; i < count; i++) {
+			this.appendProperty(JuiView.VALUE, { [shorthands.keys.type]: shorthands.values.type.nline });
+		}
 	}
 }
 
