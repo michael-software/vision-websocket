@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const pluginLoader = require('./utils/helper/PluginHelper/pluginLoader.js');
 const userLoader = require('./utils/helper/UserHelper/userLoader.js');
-const LoginHelper = require('./utils/helper/LoginHelper.jsx');
+const LoginHelper = require('./utils/helper/LoginHelper.js');
 const SocketHelper = require('./utils/helper/SocketHelper');
 
 const ServerHelper = require('./utils/helper/ServerHelper');
