@@ -1,6 +1,7 @@
 const configLoader = require('./configLoader');
 const pluginLoader = require('./PluginHelper/pluginLoader');
 const userLoader = require('./UserHelper/userLoader');
+const databaseLoader = require('./DatabaseHelper/databaseLoader');
 
 module.exports = class ServerHelper {
 	constructor() {
@@ -14,6 +15,11 @@ module.exports = class ServerHelper {
 
 				if(!config) return reject();
 
+				return databaseLoader(config).then(() => {
+					return Promise.resolve(config);
+				});
+
+			}).then((config) => {
 				let pluginPromise = pluginLoader();
 				let userPromise = userLoader(config);
 
@@ -30,7 +36,6 @@ module.exports = class ServerHelper {
 				}).catch((error) => {
 					return reject(error);
 				});
-
 			});
 
 		});
