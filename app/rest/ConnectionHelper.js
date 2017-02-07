@@ -61,7 +61,7 @@ class ConnectionHelper {
 	}
 
 	getDatabaseHelper() {
-		let DatabaseHelper = require('../utils/helper/DatabaseHelper.js');
+		let DatabaseHelper = require('../utils/helper/DatabaseHelper/DatabaseHelper.js');
 
 		return new DatabaseHelper(this.serverConfig, this);
 	}
