@@ -1,7 +1,8 @@
 module.exports = class {
 	constructor(userObject, cpermissions) {
 		this.user = userObject;
-		this.customPermissions = new Map();
+		this.user.customPermissions = new Map();
+		this.user.groups = [];
 		this.sockets = [];
 	}
 
@@ -34,16 +35,16 @@ module.exports = class {
 	}
 
 	setCustomPermission(name, value) {
-		this.customPermissions.set(name, value === '1');
+		this.user.customPermissions.set(name, value === '1');
 	}
 
 	getCustomPermission(name) {
-		this.customPermissions.get(name);
+		this.user.customPermissions.get(name);
 	}
 
 	hasPermission(name) {
-		if(this.customPermissions.has(name)) {
-			return this.customPermissions.get(name);
+		if(this.user.customPermissions.has(name)) {
+			return this.user.customPermissions.get(name);
 		}
 
 		if(this.user.permissions && this.user.permissions[name] !== undefined) {
@@ -78,8 +79,11 @@ module.exports = class {
 
 	getObject() {
 		return {
-			user: this.user,
-			customPermissions: [...this.customPermissions]
+			id: this.getId(),
+			username: this.getUsername(),
+			groups: this.user.groups,
+			permissions: this.user.permissions,
+			customPermissions: [...this.user.customPermissions]
 		};
 	}
 };

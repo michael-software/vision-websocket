@@ -127,9 +127,9 @@ class UserHelper {
 
 			if(element.getId() === userid) {
 				if(value)
-					this._userList[i].customPermissions.set(key, value);
+					this._userList[i].user.customPermissions.set(key, value);
 				else
-					this._userList[i].customPermissions.delete(key);
+					this._userList[i].user.customPermissions.delete(key);
 
 				return Promise.resolve();
 			}
