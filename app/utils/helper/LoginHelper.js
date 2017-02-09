@@ -56,7 +56,7 @@ class LoginHelper {
         if(this.socketHelper) {
             username = username.toLowerCase();
 
-			this.socketHelper.getDatabaseHelper().query({
+			return this.socketHelper.getDatabaseHelper().query({
 			    sql: "SELECT * FROM `users` WHERE `username`=? LIMIT 0,1",
                 values: [username]
 			}).then((data) => {
@@ -66,7 +66,7 @@ class LoginHelper {
 					if(row.username && row.id) {
 						this.isLoggedIn = true;
 
-						this.jwtHelper.get(server, row.id, row.username).then((token) => {
+						return this.jwtHelper.get(server, row.id, row.username).then((token) => {
 							let loginData = {
 								server: server,
 								username: row.username,
@@ -79,6 +79,8 @@ class LoginHelper {
 							if (this.$login) {
 								this.$login(loginData);
 							}
+
+							return Promise.resolve(loginData);
                         });
 					}
                 }
@@ -90,6 +92,8 @@ class LoginHelper {
 				}
             });
         }
+
+        return Promise.reject();
     }
 
     getDigesta(username, password) {
