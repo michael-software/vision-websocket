@@ -33,10 +33,10 @@ class PluginHelper {
 						throw new Error('Bad response');
 					}
 
-					resolve( data.json() );
+					return resolve( data.json() );
 				}).catch(reject);
 			} else {
-                reject('unknown error 2');
+                return reject('unknown error 2');
             }
 		});
 	}
@@ -62,7 +62,12 @@ class PluginHelper {
 						let render = builder.startRender();
 
 						render.then((data) => {
-							resolve({data: data});
+							resolve({
+								data: data,
+								head: {
+									scripts: builder.getScripts()
+								}
+							});
 						}).catch((error) => {
 							resolve(error);
 						});
@@ -145,6 +150,10 @@ class PluginHelper {
 		});
 	}
 
+	/**
+	 * Return a Map of plugins
+	 * @returns {Map}
+	 */
 	getPlugins() {
 		return this.plugins;
 	}

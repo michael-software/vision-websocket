@@ -5,10 +5,12 @@ const fs = require('fs');
 
 const pluginLoader = require('./utils/helper/PluginHelper/pluginLoader.js');
 const userLoader = require('./utils/helper/UserHelper/userLoader.js');
-const LoginHelper = require('./utils/helper/LoginHelper.jsx');
+const LoginHelper = require('./utils/helper/LoginHelper.js');
 const SocketHelper = require('./utils/helper/SocketHelper');
 
 const ServerHelper = require('./utils/helper/ServerHelper');
+
+const RestManager = require('./rest/RestManager.js');
 
 var __dirname = './public/';
 
@@ -23,9 +25,12 @@ let serverHelper = new ServerHelper();
 
 serverHelper.init().then((data) => {
 	if(data.config && data.userList && data.pluginList) {
-		let serverConfig = data.config;
+		let serverConfig = data;
 		let userList = data.userList;
 		let pluginList = data.pluginList;
+
+
+		let restManager = new RestManager(app, data);
 
 
 		http.listen(3000, function () {
@@ -33,8 +38,8 @@ serverHelper.init().then((data) => {
 		});
 
 		io.on('connection', function (socket) {
-			let socketHelper = new SocketHelper(socket, serverConfig, pluginList, userList);
-			let loginHelper = new LoginHelper(socketHelper);
+			let socketHelper = new SocketHelper(socket, serverConfig);
+			let loginHelper = socketHelper.getLoginHelper();
 
 			console.info('\x1b[36m%s\x1b[0m', 'user connected');
 
@@ -45,12 +50,9 @@ serverHelper.init().then((data) => {
 			});
 
 
-			socketHelper.register(loginHelper);
 			loginHelper.on('login', (user) => {
 				user.status = 200;
 				socket.emit('loginstatus', user);
-
-				socketHelper.register(loginHelper, user);
 			});
 			loginHelper.on('unauthorized', (data) => {
 				socket.emit('loginstatus', {

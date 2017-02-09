@@ -2,20 +2,20 @@ const fs            = require('fs');
 const fetch         = require('node-fetch');
 const FormData      = require('form-data');
 
+const ConnectionHelper           = require('./ConnectionHelper.js');
+
 const PluginHelper          = require('./PluginHelper/PluginHelper.js');
 const SearchHelper          = require('./SearchHelper.js');
 const UploadHelper          = require('./UploadHelper.js');
 const NotificationHelper    = require('./NotificationHelper/NotificationHelper.js');
 const UserHelper            = require('./UserHelper/UserHelper.js');
+const LoginHelper           = require('./LoginHelper.js');
 
-class SocketHelper {
-    constructor(socket, serverConfig, plugins, userList) {
-        this.uploadHelper = new UploadHelper(this);
-        this.pluginHelper = new PluginHelper(this, plugins);
-        this.searchHelper = new SearchHelper();
-        this.userHelper = new UserHelper(this, userList);
+class SocketHelper extends ConnectionHelper {
+    constructor(socket, serverConfig) {
+        super(serverConfig);
+
         this.socket = socket;
-        this.serverConfig = serverConfig;
 
 
         socket.on('plugins', this.getPlugins.bind(this));
@@ -31,22 +31,13 @@ class SocketHelper {
         socket.on('disconnect', this.disconnect.bind(this));
     }
 
-    register(loginHelper, user) {
-        this.pluginHelper.setLoginHelper(loginHelper);
-        this.searchHelper.setLoginHelper(loginHelper);
-        this.loginHelper = loginHelper;
-
-        if(user)
-        this.user = user;
-    }
-
     disconnect() {
         this.uploadHelper.removeAll();
     }
 
     getPlugins(data) {
         if(data == 'true') {
-            this.pluginHelper.getPluginList(this.user).then((data) => {
+            this.pluginHelper.getPluginList(this.getUserHelper().getCurrentUser()).then((data) => {
                 this.socket.emit('plugins', data);
             }).catch((error) => {
 				this.socket.emit('plugins', error.stack || error);
@@ -55,8 +46,6 @@ class SocketHelper {
     }
 
     getPlugin(data) {
-        console.info('requestPlugin', data);
-
         if(data && data.name) {
             this.pluginHelper.getPlugin(data.name, data.view, data.param, data.formData).then((response) => {
                 this.socket.emit('plugin', {
@@ -92,24 +81,6 @@ class SocketHelper {
         }
     }
 
-    getLoginHelper() {
-        return this.loginHelper;
-    }
-
-    getUserHelper() {
-        return this.userHelper;
-    }
-
-    getUploadHelper() {
-        return this.uploadHelper;
-    }
-
-	getDatabaseHelper() {
-		let DatabaseHelper = require('./DatabaseHelper.js');
-
-        return new DatabaseHelper(this.serverConfig, this);
-    }
-
 	getNotificationHelper() {
         return new NotificationHelper(this.socket, this.serverConfig, this.userHelper);
     }
@@ -122,12 +93,12 @@ class SocketHelper {
         let name = data.name;
 
         try {
-            fs.mkdirSync('temp/' + this.user.id);
+            fs.mkdirSync('temp/' + this.getUserHelper().getCurrentUser().id);
         } catch(e) {
             if ( e.code != 'EEXIST' ) throw e;
         }
 
-        let path = "temp/" + this.user.id + "/" + data.id + "/";
+        let path = "temp/" + this.getUserHelper().getCurrentUser().id + "/" + data.id + "/";
 
         try {
             fs.mkdirSync(path);

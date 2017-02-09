@@ -2,6 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const Plugin = require('./Plugin');
 
+const PermissionHelper = require('../PermissionHelper/PermissionHelper');
+const Permission = require('../PermissionHelper/Permission');
+
 const __main = path.dirname( path.dirname(require.main.filename) );
 
 let readConfig = function(pluginId) {
@@ -51,6 +54,10 @@ module.exports = function() {
 
 						if(plugin && plugin.getId()) {
 							pluginMap.set(plugin.getId(), plugin);
+
+							let usePluginPermission = `use_${plugin.getId()}`;
+
+							PermissionHelper.addPermission(new Permission(usePluginPermission));
 						}
 					}
 
