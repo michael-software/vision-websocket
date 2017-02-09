@@ -1,5 +1,5 @@
 const LoginHelper = require('../../utils/helper/LoginHelper');
-const ConnectionHelper = require('../ConnectionHelper');
+const ConnectionHelper = require('../../utils/helper/ConnectionHelper');
 
 let server;
 
@@ -12,35 +12,64 @@ module.exports = function(config) {
 function middleware(request, response, next) {
 	let promise = new Promise((resolve, reject) => {
 
+		request.connectionHelper = new ConnectionHelper(server);
+		request.loginHelper = request.connectionHelper.getLoginHelper();
+
 		let token = getTokenFromHeader(request.headers) || getTokenFromUrl(request.query);
 
-		if (!isValidToken(token)) {
-			response.status(401);
-
-			return reject('No Authorization');
+		if(token) {
+			return loginWithToken(request, response, token).then(() => {
+				return resolve();
+			}).catch(() => {
+				return reject();
+			});
 		}
 
-		request.connectionHelper = new ConnectionHelper(server);
-		request.loginHelper = new LoginHelper(request.connectionHelper);
+		let credentials = getCredentialsFromHeader(request.headers);
 
-		request.loginHelper.loginToken('jhsdjksad', token).then((user) => {
-			request.connectionHelper.register(request.loginHelper, user);
+		if(credentials) {
+			return loginWithCredentials(request, response, credentials).then(() => {
+				return resolve();
+			}).catch(() => {
+				return reject();
+			});
+		}
 
-			return resolve();
-		}).catch((error) => {
-			response.status(403);
 
-			return reject('No Authorization');
-		});
-
-		console.log(token);
+		return reject('no credentials');
 	});
 
 	promise.then(() => {
 		next();
 	}).catch((error) => {
+		response.status(401);
 		response.send(error);
 	});
+}
+
+
+function loginWithToken(request, response, token) {
+	if (!isValidToken(token)) {
+		response.status(401);
+
+		return Promise.reject('No Authorization');
+	}
+
+	return request.loginHelper.loginToken('jhsdjksad', token).then((user) => {
+		return Promise.resolve(user);
+	}).catch((error) => {
+		response.status(403);
+
+		return Promise.reject('No Authorization');
+	});
+}
+
+function loginWithCredentials(request, response, credentials) {
+	if(!isValidCredentials(credentials)) return Promise.reject();
+
+	credentials = parseCredentials(credentials);
+
+	return request.connectionHelper.getLoginHelper().loginCredentials('jkhk', credentials[0], credentials[1]);
 }
 
 
@@ -64,4 +93,31 @@ function isValidToken(token) {
 	token = String(token).split('.');
 
 	return token.length === 3;
+}
+
+function getCredentialsFromHeader(headers) {
+
+	if(!headers.authorization) return null;
+
+	if(!headers.authorization.toLowerCase().startsWith('basic')) return null;
+
+	return headers.authorization.replace(/basic /i, '');
+}
+
+function isValidCredentials(credentials) {
+	if(!credentials) return false;
+
+	credentials = parseCredentials(credentials);
+
+	return credentials.length === 2;
+}
+
+function parseCredentials(credentials) {
+	try {
+		credentials = Buffer.from(credentials, 'base64').toString();
+
+		return credentials.split(':');
+	} catch(error) {
+		return null;
+	}
 }
