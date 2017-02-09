@@ -8,6 +8,8 @@ class JuiViewBuilder {
 		this.pluginId = pluginId;
 
 		this.databaseHelpers = [];
+
+		this.scripts = [];
 	}
 
 	getJuiHelper() {
@@ -72,6 +74,23 @@ class JuiViewBuilder {
 		if(this.formData && this.getFormData) {
 			let render = this.getFormData(this.formData);
 
+
+
+			if(render instanceof Promise) {
+				return render.then((render) => {
+
+					let renderElements = !!render ? render : this.render();
+
+					return this._getRenderPromise(renderElements).then((data) => {
+						return data;
+					}).catch((error) => {
+						return error;
+					});
+				}).catch((error) => {
+					console.log('render', error);
+				});
+			}
+
 			if(render) return this._getRenderPromise(render);
 		}
 
@@ -82,7 +101,9 @@ class JuiViewBuilder {
 	_getRenderPromise(data) {
 		if (data instanceof Promise) return data;
 
-		return Promise.resolve(data);
+		if (Array.isArray( data )) return Promise.resolve( data );
+
+		return Promise.resolve(this.getJuiHelper().getArray());
 	}
 
 
@@ -99,6 +120,14 @@ class JuiViewBuilder {
 		if(this.formData) return true;
 
 		return false;
+	}
+
+	redirect(name, view, params) {
+		this.scripts.push( this.getJuiHelper().Action.openPlugin(name, view, params) );
+	}
+
+	getScripts() {
+		return this.scripts;
 	}
 
 
