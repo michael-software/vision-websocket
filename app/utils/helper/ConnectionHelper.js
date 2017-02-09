@@ -2,11 +2,12 @@ const fs            = require('fs');
 const fetch         = require('node-fetch');
 const FormData      = require('form-data');
 
-const PluginHelper          = require('../utils/helper/PluginHelper/PluginHelper.js');
-const SearchHelper          = require('../utils/helper/SearchHelper.js');
-const UploadHelper          = require('../utils/helper/UploadHelper.js');
-const NotificationHelper    = require('../utils/helper/NotificationHelper/NotificationHelper.js');
-const UserHelper            = require('../utils/helper/UserHelper/UserHelper.js');
+const PluginHelper          = require('./PluginHelper/PluginHelper.js');
+const SearchHelper          = require('./SearchHelper.js');
+const UploadHelper          = require('./UploadHelper.js');
+const NotificationHelper    = require('./NotificationHelper/NotificationHelper.js');
+const UserHelper            = require('./UserHelper/UserHelper.js');
+const LoginHelper           = require('./LoginHelper.js');
 
 class ConnectionHelper {
 	constructor(server) {
@@ -15,15 +16,7 @@ class ConnectionHelper {
 		this.searchHelper = new SearchHelper();
 		this.userHelper = new UserHelper(this, server.userList);
 		this.serverConfig = server.config;
-	}
-
-	register(loginHelper, user) {
-		this.pluginHelper.setLoginHelper(loginHelper);
-		this.searchHelper.setLoginHelper(loginHelper);
-		this.loginHelper = loginHelper;
-
-		if(user)
-			this.user = user;
+		this.loginHelper = new LoginHelper(this);
 	}
 
 	disconnect() {
@@ -31,7 +24,7 @@ class ConnectionHelper {
 	}
 
 	getPlugins() {
-		return this.pluginHelper.getPluginList(this.user);
+		return this.pluginHelper.getPluginList(this.getUserHelper().getCurrentUser());
 	}
 
 	getPlugin(data) {
@@ -61,7 +54,7 @@ class ConnectionHelper {
 	}
 
 	getDatabaseHelper() {
-		let DatabaseHelper = require('../utils/helper/DatabaseHelper/DatabaseHelper.js');
+		let DatabaseHelper = require('./DatabaseHelper/DatabaseHelper.js');
 
 		return new DatabaseHelper(this.serverConfig, this);
 	}
