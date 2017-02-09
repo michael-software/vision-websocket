@@ -46,7 +46,7 @@ class PluginHelper {
 
 		return new Promise((resolve, reject) => {
 
-			if(this.isInstalled(name)) {
+			if(this.isInstalled(name) && this.isPluginAllowed(name)) {
 
 				try {
 					let juiHelper = new JuiHelper();
@@ -148,6 +148,18 @@ class PluginHelper {
 
 			}
 		});
+	}
+
+	isPluginAllowed(pluginId) {
+
+		if(pluginId === 'plg_home' || pluginId === 'plg_user' || pluginId === 'plg_license') {
+			return true;
+		}
+
+		let userHelper = this.socketHelper.getUserHelper();
+		let currentUser = userHelper.getCurrentUser();
+
+		return currentUser.hasPermission(`use_${pluginId}`);
 	}
 
 	/**
