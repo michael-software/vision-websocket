@@ -1,36 +1,72 @@
 var fetch = require('node-fetch');
 
-class SearchHelper {
-	constructor(loginHelper) {
-		this.loginHelper = loginHelper;
-	}
+const CustomJuiHelper = require('../CustomJuiHelper');
 
-	setLoginHelper(loginHelper) {
-		this.loginHelper = loginHelper;
+class SearchHelper {
+	constructor(socketHelper) {
+		this.socketHelper = socketHelper;
 	}
 
 	getSearch(query) {
 		//console.log('this', data);
 
 		return new Promise((resolve, reject) => {
-			if (this.loginHelper.getServer() && this.loginHelper.getToken()) {
-				let url = `${this.loginHelper.getServer()}/api/search.php?format=jui&query=${query}`;
+			let plugins = this.socketHelper.getPluginHelper().getPlugins().values();
 
-				return fetch(url, {
-					headers: {
-						Authorization: `bearer ${this.loginHelper.getToken()}`
-					}
-				}).then(function (data) {
-					if (!data) {
-						throw new Error('Bad response');
-					}
+			let results = [];
 
-					resolve( data.json() );
-				}).catch(reject);
+			for(let plugin of plugins) {
+				if(this.searchInString(plugin.getName(), query)) {
+					results.push(plugin);
+				}
 			}
 
-            reject('unknown error');
+            return resolve(results);
 		});
+	}
+
+	getSearchView(query) {
+		return this.getSearch(query).then((data) => {
+			let juiHelper = new CustomJuiHelper();
+
+
+			let list = new juiHelper.List();
+
+			data.map((element) => {
+				let entry = new juiHelper.List.Entry(element.name);
+				entry.click = juiHelper.Action.openPlugin(element.id);
+
+				list.add(entry);
+			});
+
+			juiHelper.add(list);
+
+			return juiHelper;
+		});
+	}
+
+	/**
+	 * Searchs in a string
+	 * @param string {string} - The string in which should be searched
+	 * @param query {string} - The string that should be searched
+	 * @returns {boolean} - Found or not found
+	 */
+	searchInString(string, query) {
+		string = String(string);
+		let lString = string.toLowerCase();
+
+		query = String(query);
+		let lQuery = query.toLowerCase();
+
+		if(lString.search(lQuery) !== -1) {
+			return true;
+		}
+
+		if(lQuery.search(lString) !== -1) {
+			return true;
+		}
+
+		return false;
 	}
 }
 
