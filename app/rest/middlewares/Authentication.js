@@ -55,7 +55,7 @@ function loginWithToken(request, response, token) {
 		return Promise.reject('No Authorization');
 	}
 
-	return request.loginHelper.loginToken('jhsdjksad', token).then((user) => {
+	return request.loginHelper.loginToken(null, token).then((user) => {
 		return Promise.resolve(user);
 	}).catch((error) => {
 		response.status(403);
