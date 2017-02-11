@@ -36,7 +36,11 @@ class LoginHelper {
 						this.$login(loginData);
 					}
 
-					return resolve(loginData);
+					this.createUserDirectories().then(() => {
+						return resolve(loginData);
+					}).catch((error) => {
+						return reject(error);
+					});
 				}).catch((error) => {
 					console.warn('setted token', error);
 
@@ -80,7 +84,11 @@ class LoginHelper {
 								this.$login(loginData);
 							}
 
-							return Promise.resolve(loginData);
+							return this.createUserDirectories().then(() => {
+								return Promise.resolve(loginData)
+							}).catch((error) => {
+								return Promise.reject(error);
+							});
                         });
 					}
                 }
@@ -146,6 +154,28 @@ class LoginHelper {
 
 	setToken(token) {
 		this.token = token;
+	}
+
+	createUserDirectories() {
+    	return new Promise((resolve, reject) => {
+
+			let fileHelper = this.socketHelper.getFileHelper();
+
+			if(!fileHelper.isAllowed(fileHelper.TYPE_PRIVATE)) return resolve();
+
+			let rootDirectory = fileHelper.getUserDirectory();
+			let privateFiles = fileHelper.getUserFileDirectory();
+
+			if (!fs.existsSync(rootDirectory)){
+				fs.mkdirSync(rootDirectory);
+			}
+
+			if (!fs.existsSync(privateFiles)){
+				fs.mkdirSync(privateFiles);
+			}
+
+			return resolve();
+		});
 	}
 }
 
