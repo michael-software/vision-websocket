@@ -1,25 +1,27 @@
 module.exports = class Plugin {
 	constructor(data) {
-		this._data = data;
+		this.id = data.id;
+		this.name = data.name;
+		this.icon = data.icon;
 	}
 
 	getId() {
-		if(this._data.id)
-			return this._data.id;
+		if(this.id)
+			return this.id;
 
 		return null;
 	}
 
 	getName() {
-		if(this._data.name)
-			return this._data.name;
+		if(this.name)
+			return this.name;
 
 		return null;
 	}
 
 	getIcon() {
-		if(this._data.icon)
-			return this._data.icon;
+		if(this.icon)
+			return this.icon;
 
 		return null;
 	}
