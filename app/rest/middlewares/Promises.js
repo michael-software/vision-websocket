@@ -9,7 +9,8 @@ module.exports = function promiseify(request, response, next) {
 			response.send(responseText);
 		}).catch(function(error) {
 			responseText = JSON.stringify({
-				error: error
+				error: error.message,
+				stack: error.stack
 			});
 			response.send(responseText);
 		});
