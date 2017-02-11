@@ -8,6 +8,7 @@ const UploadHelper          = require('./UploadHelper.js');
 const NotificationHelper    = require('./NotificationHelper/NotificationHelper.js');
 const UserHelper            = require('./UserHelper/UserHelper.js');
 const LoginHelper           = require('./LoginHelper.js');
+const FileHelper            = require('./FileHelper/FileHelper.js');
 
 class ConnectionHelper {
 	constructor(server) {
@@ -17,6 +18,7 @@ class ConnectionHelper {
 		this.searchHelper = new SearchHelper(this);
 		this.userHelper = new UserHelper(this, server.userList);
 		this.serverConfig = server.config;
+		this.fileHelper = new FileHelper(this);
 	}
 
 	disconnect() {
@@ -39,6 +41,10 @@ class ConnectionHelper {
 		if(data && data.query) {
 			return this.searchHelper.getSearch(data.query);
 		}
+	}
+
+	getFileHelper() {
+		return this.fileHelper;
 	}
 
 	getPluginHelper() {

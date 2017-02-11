@@ -1,7 +1,10 @@
+const fs = require('fs');
+
 const configLoader = require('./configLoader');
 const pluginLoader = require('./PluginHelper/pluginLoader');
 const userLoader = require('./UserHelper/userLoader');
 const databaseLoader = require('./DatabaseHelper/databaseLoader');
+const FileHelper = require('./FileHelper/FileHelper');
 
 module.exports = class ServerHelper {
 	constructor() {
@@ -10,6 +13,10 @@ module.exports = class ServerHelper {
 
 	init() {
 		return new Promise((resolve, reject) => {
+
+			if (!fs.existsSync(FileHelper.getServerFileDirectory())){
+				fs.mkdirSync(FileHelper.getServerFileDirectory());
+			}
 
 			configLoader().then((config) => {
 

@@ -62,6 +62,27 @@ class RestManager {
 				}
 			}));
 		});
+
+		express.get('/file', function (req, res) {
+			res.promise(new Promise((resolve, reject) => {
+				let fileHelper = req.connectionHelper.getFileHelper();
+				let path = req.query.path;
+				let isAllowed = fileHelper.isAllowed(fileHelper.TYPE_PRIVATE);
+
+				console.log(path);
+
+				if(!path) return reject();
+				if(!isAllowed) return reject();
+
+
+				res.sendFile(path, { root: fileHelper.getUserFileDirectory() }, (err) => {
+					if(err) {
+						res.statusCode = 404;
+						return reject(err);
+					}
+				});
+			}));
+		});
 	}
 }
 
