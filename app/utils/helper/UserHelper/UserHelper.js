@@ -16,6 +16,11 @@ class UserHelper {
 		this.MODIFY_USERS = UserHelper.MODIFY_USERS;
 	}
 
+	
+	/**
+	 * Returns the current logged in user
+	 * @returns {User} - The current user
+	 */
 	getCurrentUser() {
 		let loginHelper = this.socketHelper.getLoginHelper();
 
@@ -28,6 +33,7 @@ class UserHelper {
 		});
 	}
 
+
 	/**
 	 * Returns a map contains the users
 	 * @returns {Map}
@@ -36,6 +42,12 @@ class UserHelper {
 		return this._userList;
 	}
 
+
+	/**
+	 * Returns a user by an identification-variable
+	 * @param identification {int,string} - Identification-variable (userid or username)
+	 * @returns {User|null} - Returns the user or null (user not found)
+	 */
 	getUser(identification) {
 		if(Tools.isNumeric(identification)) {
 			return this._userList.find(function(user) {
@@ -43,9 +55,23 @@ class UserHelper {
 			});
 		}
 
+		if(Tools.isString(identification)) {
+			return this._userList.find(function(user) {
+				return user.getUsername() == identification;
+			});
+		}
+
 		return null;
 	}
 
+
+	/**
+	 * Change the permission of a user
+	 * @param user {User} - A User-object that represents the user
+	 * @param key {String} - The key of the permission that should be changed
+	 * @param value - The value the permission should be. Will be converted to true or false
+	 * @returns {Promise} - Promise that will be resolved or rejected
+	 */
 	changePermission(user, key, value) {
 		if(!user instanceof User) return Promise.reject('user is not of type user');
 		if(!this.getCurrentUser().hasPermission(this.MODIFY_USERS)) return Promise.reject('no permission to modify user');
@@ -66,6 +92,15 @@ class UserHelper {
 		return Promise.reject();
 	}
 
+
+	/**
+	 * Internal function to update custom permissions in the database without validation of current users permission
+	 * @param userid {int} - Id of the user
+	 * @param key {String} - The key of the permission that should be changed
+	 * @param value {int} - The value the permission should be.
+	 * @returns {Promise} - Promise that will be resolved or rejected
+	 * @private
+	 */
 	_updatePermission(userid, key, value) {
 		let databaseHelper = this.socketHelper.getDatabaseHelper();
 
@@ -79,6 +114,14 @@ class UserHelper {
 	}
 
 
+	/**
+	 * Internal function to update server-permissions in the database without validation of current users permission
+	 * @param userid {int} - Id of the user
+	 * @param key {String} - The key of the permission that should be changed
+	 * @param value {int} - The value the permission should be.
+	 * @returns {Promise} - Promise that will be resolved or rejected
+	 * @private
+	 */
 	_updateServerPermission(userid, key, value) {
 		let databaseHelper = this.socketHelper.getDatabaseHelper();
 
@@ -95,8 +138,6 @@ class UserHelper {
 		databaseHelper.query('PREPARE stmt FROM @s;');
 
 		let retval = databaseHelper.query('EXECUTE stmt;').then((data) => {
-			console.log(data.rows.affectedRows);
-
 			if(data.rows.affectedRows === 1) {
 				return this._changeServerPermission(userid, key, value);
 			}
@@ -107,6 +148,15 @@ class UserHelper {
 		return retval;
 	}
 
+
+	/**
+	 * Internal function to change a server permission in the server cache without validation of current users permission
+	 * @param userid {int} - Id of the user
+	 * @param key {String} - The key of the permission that should be changed
+	 * @param value {int} - The value the permission should be.
+	 * @returns {Promise} - Promise that will be resolved or rejected
+	 * @private
+	 */
 	_changeServerPermission(userid, key, value) {
 		for(let i = 0, z = this._userList.length; i < z; i++) {
 			let element = this._userList[i];
@@ -121,6 +171,15 @@ class UserHelper {
 		return Promise.reject();
 	}
 
+
+	/**
+	 * Internal function to change a custom permission in the server cache without validation of current users permission
+	 * @param userid {int} - Id of the user
+	 * @param key {String} - The key of the permission that should be changed
+	 * @param value {int} - The value the permission should be.
+	 * @returns {Promise} - Promise that will be resolved or rejected
+	 * @private
+	 */
 	_changePermission(userid, key, value) {
 		for(let i = 0, z = this._userList.length; i < z; i++) {
 			let element = this._userList[i];
