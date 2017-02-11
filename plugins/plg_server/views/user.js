@@ -127,6 +127,7 @@ module.exports = class Builder extends JuiViewBuilder {
 		this.renderCheckbox(permissionContainer, userHelper.MODIFY_USERS, 'Benutzer bearbeiten');
 		this.renderCheckbox(permissionContainer, userHelper.LOG_ACCESS, 'Logs einsehen');
 		this.renderCheckbox(permissionContainer, userHelper.SERVER_NOTIFICATIONS, 'Serverbenachrichtigungen erhalten');
+		this.renderCheckbox(permissionContainer, userHelper.ACCESS_FILES, 'Private Dateien anlegen');
 
 		juiHelper.add(permissionContainer);
 	}
