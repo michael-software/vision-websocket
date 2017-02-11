@@ -11,12 +11,12 @@ const LoginHelper           = require('./LoginHelper.js');
 
 class ConnectionHelper {
 	constructor(server) {
+		this.loginHelper = new LoginHelper(this);
 		this.uploadHelper = new UploadHelper(this);
 		this.pluginHelper = new PluginHelper(this, server.pluginList);
-		this.searchHelper = new SearchHelper();
+		this.searchHelper = new SearchHelper(this);
 		this.userHelper = new UserHelper(this, server.userList);
 		this.serverConfig = server.config;
-		this.loginHelper = new LoginHelper(this);
 	}
 
 	disconnect() {
@@ -41,6 +41,10 @@ class ConnectionHelper {
 		}
 	}
 
+	getPluginHelper() {
+		return this.pluginHelper;
+	}
+
 	getLoginHelper() {
 		return this.loginHelper;
 	}
@@ -51,6 +55,10 @@ class ConnectionHelper {
 
 	getUploadHelper() {
 		return this.uploadHelper;
+	}
+
+	getSearchHelper() {
+		return this.searchHelper;
 	}
 
 	getDatabaseHelper() {
