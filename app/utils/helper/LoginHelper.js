@@ -22,7 +22,7 @@ class LoginHelper {
 					console.log('validated', data);
 
 					let loginData = {
-						server: server,
+						server: server || data.server,
 						username: data.username,
 						id: data.id,
 						token: authtoken
@@ -36,7 +36,7 @@ class LoginHelper {
 						this.$login(loginData);
 					}
 
-					resolve(loginData);
+					return resolve(loginData);
 				}).catch((error) => {
 					console.warn('setted token', error);
 
@@ -44,7 +44,7 @@ class LoginHelper {
 						this.$unauthorized(error);
 					}
 
-					reject(error);
+					return reject(error);
 				});
 			});
 		}
