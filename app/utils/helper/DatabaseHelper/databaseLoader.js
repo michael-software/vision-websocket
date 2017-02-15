@@ -59,7 +59,7 @@ function createTables(databaseHelper, tables) {
 }
 
 function createUserPermissionsTable(databaseHelper) {
-	return Promise.resolve.then(() => {
+	return Promise.resolve().then(() => {
 		return databaseHelper.query(`
 			CREATE TABLE IF NOT EXISTS ##praefix##user_permissions
 			(

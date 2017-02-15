@@ -36,12 +36,22 @@ class SocketHelper extends ConnectionHelper {
     }
 
     getPlugins(data) {
-        if(data == 'true') {
+        if(data == 'true' || data === true) {
             this.pluginHelper.getPluginList(this.getUserHelper().getCurrentUser()).then((data) => {
                 this.socket.emit('plugins', data);
             }).catch((error) => {
 				this.socket.emit('plugins', error.stack || error);
             });
+        } else {
+
+            let plugins = this.pluginHelper.getPlugins(); // TODO same code as in RestManager
+			let pluginArray = [];
+
+			for(let plugin of plugins) {
+				pluginArray.push(plugin);
+			}
+
+			this.socket.emit('plugins', pluginArray);
         }
     }
 
