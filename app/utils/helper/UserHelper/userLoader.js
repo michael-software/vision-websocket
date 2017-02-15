@@ -27,7 +27,15 @@ module.exports = function(config) {
 								LEFT JOIN \`##praefix##user_permissions\` AS custom_permissions
 									ON (users.id = custom_permissions.user)
 								WHERE users.username != 'root'
-								GROUP BY users.id
+								GROUP BY
+									users.id,
+									permissions.access_files,
+								    permissions.modify_users,
+								    permissions.start_server,
+								    permissions.stop_server,
+								    permissions.server_notifications,
+								    permissions.access_log
+								
 								`).then((data) => {
 			let userArray = [];
 
