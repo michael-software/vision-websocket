@@ -48,7 +48,8 @@ class SocketHelper extends ConnectionHelper {
 			let pluginArray = [];
 
 			for(let plugin of plugins) {
-				pluginArray.push(plugin);
+			    if(plugin[1])
+				pluginArray.push(plugin[1]);
 			}
 
 			this.socket.emit('plugins', pluginArray);
