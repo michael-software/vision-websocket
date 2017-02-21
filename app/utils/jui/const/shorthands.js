@@ -28,7 +28,8 @@ module.exports = {
 		left: 26,
 		all: 27,
 		bottom: 28,
-		right: 29
+		right: 29,
+		change: 30,
 	},
 	values: {
 		type: {
@@ -87,8 +88,8 @@ module.exports = {
 			'submit()': 1
 		},
 		value: {
-			false: 1,
-			true: 2
+			false: 0,
+			true: 1
 		}
 	}
 };
