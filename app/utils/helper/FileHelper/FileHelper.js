@@ -74,8 +74,6 @@ class FileHelper {
 	move(from, to) {
 		return new Promise((resolve, reject) => {
 			try {
-				console.log(from);
-
 				let source = fs.createReadStream(from),
 					destination = fs.createWriteStream(to);
 
