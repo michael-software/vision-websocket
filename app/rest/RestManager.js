@@ -1,6 +1,14 @@
+const fs = require("fs");
+const path  = require('path');
+const multer  = require('multer');
+const upload = multer({ dest: 'uploads/' });
+
+
 const PromiseMiddleware = require('./middlewares/Promises');
 const AuthenticationMiddleware = require('./middlewares/Authentication');
 const PluginHelper = require('../utils/helper/PluginHelper/PluginHelper');
+
+const UPLOAD_FIELD_NAME = 'files';
 
 class RestManager {
 	constructor(express, config) {
@@ -81,6 +89,45 @@ class RestManager {
 						return reject(err);
 					}
 				});
+			}));
+		});
+
+		express.post('/file', upload.array(UPLOAD_FIELD_NAME), function(req, res) {
+			res.promise(new Promise((resolve, reject) => {
+				if(Array.isArray(req.files)) {
+
+					const fileHelper = req.connectionHelper.getFileHelper();
+					const uploadHelper = req.connectionHelper.getUploadHelper();
+
+					const USER_TMP_DIR = fileHelper.getUserTempDirectory();
+
+					let promiseArray = req.files.map((file) => {
+						const newFileName = path.join(USER_TMP_DIR, file.filename);
+						let uploadPromise = fileHelper.move(file.path, newFileName);
+
+						return uploadPromise.then((to) => {
+							const id = uploadHelper.getUploadId();
+							uploadHelper.setUploaded(id, newFileName);
+
+							return {
+								id: id,
+								status: 200
+							};
+						}).catch(() => {
+							return {
+								status: 500
+							};
+						});
+					});
+
+					Promise.all(promiseArray).then((data) => {
+						return resolve({
+							data: data
+						});
+					});
+				} else {
+					return reject();
+				}
 			}));
 		});
 	}

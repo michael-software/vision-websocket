@@ -1,4 +1,5 @@
 const fs = require('fs');
+const crypto = require("crypto");
 
 class UploadHelper {
     constructor(socketHelper) {
@@ -6,6 +7,10 @@ class UploadHelper {
         this.uploadListeners = {};
         this.socketHelper = socketHelper;
     }
+
+	getUploadId() {
+		return crypto.randomBytes(16).toString("hex");
+	}
 
     setUploaded(id, path) {
         if(this.uploadListeners[id] && this.uploadListeners[id].success && this.uploadListeners[id].error) {
