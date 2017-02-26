@@ -165,6 +165,7 @@ class LoginHelper {
 
 			let rootDirectory = fileHelper.getUserDirectory();
 			let privateFiles = fileHelper.getUserFileDirectory();
+			let tempFiles = fileHelper.getUserTempDirectory();
 
 			if (!fs.existsSync(rootDirectory)){
 				fs.mkdirSync(rootDirectory);
@@ -172,6 +173,10 @@ class LoginHelper {
 
 			if (!fs.existsSync(privateFiles)){
 				fs.mkdirSync(privateFiles);
+			}
+
+			if (!fs.existsSync(tempFiles)){
+				fs.mkdirSync(tempFiles);
 			}
 
 			return resolve();
