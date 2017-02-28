@@ -4,6 +4,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 
 const JwtHelper = require('./JwtHelper');
+const PasswordHelper = require('./PasswordHelper');
 
 
 class LoginHelper {
@@ -64,7 +65,7 @@ class LoginHelper {
 			    sql: "SELECT * FROM `users` WHERE `username`=? LIMIT 0,1",
                 values: [username]
 			}).then((data) => {
-			    if(data.rows && data.rows[0] && data.rows[0].digesta1 == this.getDigesta(username, password)) {
+			    if(data.rows && data.rows[0] && PasswordHelper.compare(password, data.rows[0].password)) {
 					let row = data.rows[0];
 
 					if(row.username && row.id) {
