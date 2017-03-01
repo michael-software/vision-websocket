@@ -9,8 +9,8 @@ module.exports = function(config) {
 		databaseHelper.query(`SELECT
 								    users.id as id,
 								    users.username as username,
-								    users.digesta1 as digesta1,
-								    users.timestamp as creationTime,
+								    users.password as digesta1,
+								    users.creationTime as creationTime,
 								    
 									permissions.access_files,
 								    permissions.modify_users,
@@ -26,7 +26,6 @@ module.exports = function(config) {
 									ON (users.id = permissions.user)
 								LEFT JOIN \`##praefix##user_permissions\` AS custom_permissions
 									ON (users.id = custom_permissions.user)
-								WHERE users.username != 'root'
 								GROUP BY
 									users.id,
 									permissions.access_files,

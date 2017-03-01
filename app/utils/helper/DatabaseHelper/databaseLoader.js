@@ -1,4 +1,5 @@
 const DatabaseHelper = require('./DatabaseHelper');
+const PasswordHelper = require('../PasswordHelper');
 
 module.exports = function(config) {
 	if(!config.database || !config.database.database) {
@@ -39,6 +40,14 @@ module.exports = function(config) {
 function createTables(databaseHelper, tables) {
 	let promiseArray = [];
 
+	if(tables.indexOf('users') === -1) {
+		promiseArray.push( createUsersTable(databaseHelper) );
+	}
+
+	if(tables.indexOf('jwt') === -1) {
+		promiseArray.push( createJwtTable(databaseHelper) );
+	}
+
 	if(tables.indexOf('user_permissions') === -1) {
 		promiseArray.push( createUserPermissionsTable(databaseHelper) );
 	}
@@ -58,6 +67,38 @@ function createTables(databaseHelper, tables) {
 	return Promise.all(promiseArray);
 }
 
+function createUsersTable(databaseHelper) {
+	return databaseHelper.query(`
+		CREATE TABLE IF NOT EXISTS ##praefix##users
+		(
+			id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			name VARCHAR(255) NOT NULL,
+			password VARCHAR(512) NOT NULL,
+			user INT NOT NULL,
+			state TINYINT DEFAULT 0 NOT NULL,
+			creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			CONSTRAINT jwt__users_id_fk
+				FOREIGN KEY (user)
+				REFERENCES users (id)
+				ON DELETE CASCADE
+		);
+	`);
+}
+
+function createJwtTable(databaseHelper) {
+	return databaseHelper.query(`
+		CREATE TABLE IF NOT EXISTS ##praefix##jwt
+		(
+			id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+			name VARCHAR(255) DEFAULT 'Device' NOT NULL,
+			signature VARCHAR(512) NOT NULL,
+			user INT NOT NULL,
+			refused TINYINT DEFAULT 0,
+			timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		);
+	`);
+}
+
 function createUserPermissionsTable(databaseHelper) {
 	return Promise.resolve().then(() => {
 		return databaseHelper.query(`
@@ -67,7 +108,10 @@ function createUserPermissionsTable(databaseHelper) {
 				name VARCHAR(128) NOT NULL,
 				value INT DEFAULT 0,
 				user INT NOT NULL,
-				CONSTRAINT user_permissions_users_id_fk FOREIGN KEY (user) REFERENCES users (id),
+				CONSTRAINT user_permissions_users_id_fk
+					FOREIGN KEY (user)
+					REFERENCES users (id)
+					ON DELETE CASCADE,
 				CONSTRAINT user_permissions_uindex UNIQUE (name, user)
 			);
 		`);
@@ -93,7 +137,10 @@ function createUserToGroupsTable(databaseHelper) {
 			id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 			user INT NOT NULL,
 			\`group\` INT NOT NULL,
-			CONSTRAINT user_to_groups__users_id_fk FOREIGN KEY (user) REFERENCES users (id),
+			CONSTRAINT user_to_groups__users_id_fk
+				FOREIGN KEY (user)
+				REFERENCES users (id)
+				ON DELETE CASCADE,
 			CONSTRAINT user_to_groups__user_groups_fk FOREIGN KEY (\`group\`) REFERENCES groups (id)
 		);
 	`);
@@ -112,35 +159,151 @@ function createUserPermissionsServerTable(databaseHelper) {
 			start_server INT DEFAULT 0,
 			stop_server INT DEFAULT 0,
 			server_notifications INT DEFAULT 0,
-			CONSTRAINT user_permissions_server__users_id_fk FOREIGN KEY (user) REFERENCES users (id)
+			CONSTRAINT user_permissions_server__users_id_fk
+				FOREIGN KEY (user)
+				REFERENCES users (id)
+				ON DELETE CASCADE
 		);
 	`);
 }
 
 function createStoredProcedures(databaseHelper) {
-	databaseHelper.query(`DROP PROCEDURE IF EXISTS ##praefix##spSetPermission;`);
-	return databaseHelper.query(`
-	CREATE PROCEDURE ##praefix##spSetPermission(IN userid INT, IN permissionName VARCHAR(128), IN permissionValue INT)
-	  BEGIN
-		DECLARE entryId INT DEFAULT (SELECT id
-		  FROM ##praefix##user_permissions
-		  WHERE user=userid
-				AND name=permissionName
-		  LIMIT 0,1);
-	
-		IF entryId IS NOT NULL THEN
-		  UPDATE ##praefix##user_permissions
-			SET value=permissionValue
-			WHERE id=entryId;
-		ELSE
-		  INSERT INTO ##praefix##user_permissions
-			  (user, name, value)
-			VALUES
-			  (userid, permissionName, permissionValue);
-		END IF;
-	  END;`);
+	return databaseHelper.query(`DROP PROCEDURE IF EXISTS ##praefix##spSetPermission;`).then(() => {
+		return databaseHelper.query(`
+			CREATE PROCEDURE ##praefix##spSetPermission(IN userid INT, IN permissionName VARCHAR(128), IN permissionValue INT)
+			  BEGIN
+				DECLARE entryId INT DEFAULT (SELECT id
+				  FROM ##praefix##user_permissions
+				  WHERE user=userid
+						AND name=permissionName
+				  LIMIT 0,1);
+			
+				IF entryId IS NOT NULL THEN
+				  UPDATE ##praefix##user_permissions
+					SET value=permissionValue
+					WHERE id=entryId;
+				ELSE
+				  INSERT INTO ##praefix##user_permissions
+					  (user, name, value)
+					VALUES
+					  (userid, permissionName, permissionValue);
+				END IF;
+			  END;`);
+	}).then(() => {
+		return databaseHelper.query(`DROP PROCEDURE IF EXISTS ##praefix##spCreateUser;`);
+	}).then(() => {
+		return databaseHelper.query(`
+			CREATE PROCEDURE ##praefix##spCreateUser(IN pUsername VARCHAR(255), IN password VARCHAR(512))
+			  BEGIN
+				DECLARE userId INT DEFAULT (SELECT id
+				  FROM ##praefix##users
+				  WHERE LOWER(username)=LOWER(pUsername)
+				  LIMIT 0,1);
+			
+				IF userId IS NOT NULL THEN
+				  SELECT userId as error;
+				ELSE
+				  INSERT INTO ##praefix##users
+					  (username, password)
+					VALUES
+					  (pUsername, password);
+			 	  
+			 	  SET userId = LAST_INSERT_ID();
+			 	  
+			 	  INSERT INTO ##praefix##user_permissions_server
+			 	  		(user)
+			 	  	VALUES
+			 	  		(userId);
+			 	  		
+				  SELECT userId as userId;
+				END IF;
+			  END;`);
+	}).then(() => {
+		return databaseHelper.query(`DROP PROCEDURE IF EXISTS ##praefix##spSetServerPermission;`);
+	}).then(() => {
+		return databaseHelper.query(`
+			CREATE PROCEDURE ##praefix##spSetServerPermission(IN userid INT, IN permissionName VARCHAR(128), IN permissionValue INT)
+			  BEGIN
+			  	DECLARE lowerPermissionName VARCHAR(128) DEFAULT LOWER(permissionName);
+			  
+			  	CASE lowerPermissionName
+  					WHEN 'access_files' THEN
+						UPDATE ##praefix##user_permissions_server
+							SET access_files=permissionValue
+							WHERE user=userid;
+					WHEN 'access_log' THEN
+						UPDATE ##praefix##user_permissions_server
+							SET access_log=permissionValue
+							WHERE user=userid;
+					WHEN 'modify_users' THEN
+						UPDATE ##praefix##user_permissions_server
+							SET modify_users=permissionValue
+							WHERE user=userid;
+					WHEN 'start_server' THEN
+						UPDATE ##praefix##user_permissions_server
+							SET start_server=permissionValue
+							WHERE user=userid;
+					WHEN 'stop_server' THEN
+						UPDATE ##praefix##user_permissions_server
+							SET stop_server=permissionValue
+							WHERE user=userid;
+					WHEN 'server_notifications' THEN
+						UPDATE ##praefix##user_permissions_server
+							SET server_notifications=permissionValue
+							WHERE user=userid;
+					ELSE
+						BEGIN
+							SELECT 0;
+						END;
+				END CASE;
+			  END;`);
+	});
 }
 
 function createEntries(databaseHelper, tables) {
-	return Promise.resolve(tables);
+	return Promise.resolve(tables).then(() => {
+		return PasswordHelper.getHash('123456');
+	}).then((hash) => {
+		return databaseHelper.query(`
+			SELECT Id from ##praefix##users WHERE LOWER(username)=LOWER('root') LIMIT 0,1;
+		`).then((data) => {
+			if(data.rows.length === 0) {
+				return databaseHelper.query(`
+					CALL ##praefix##spCreateUser('root', '${hash}');
+				`).then((data) => {
+					if(!data.rows[0] || !data.rows[0][0] || !data.rows[0][0].userId || data.rows[0][0].userId <= 0) return Promise.reject();
+
+					const userId = data.rows[0][0].userId;
+
+					return databaseHelper.query(`
+						CALL ##praefix##spSetPermission('${userId}', 'use_plg_server', '1');
+					`).then(() => {
+						return databaseHelper.query(`
+							CALL ##praefix##spSetServerPermission('${userId}', 'modify_users', '1');
+						`)
+					}).then(() => {
+						return databaseHelper.query(`
+							CALL ##praefix##spSetServerPermission('${userId}', 'access_files', '1');
+						`)
+					}).then(() => {
+						return databaseHelper.query(`
+							CALL ##praefix##spSetServerPermission('${userId}', 'access_log', '1');
+						`)
+					}).then(() => {
+						return databaseHelper.query(`
+							CALL ##praefix##spSetServerPermission('${userId}', 'start_server', '1');
+						`)
+					}).then(() => {
+						return databaseHelper.query(`
+							CALL ##praefix##spSetServerPermission('${userId}', 'stop_server', '1');
+						`)
+					}).then(() => {
+						return databaseHelper.query(`
+							CALL ##praefix##spSetServerPermission('${userId}', 'server_notifications', '1');
+						`)
+					});
+				});
+			}
+		});
+	});
 }
