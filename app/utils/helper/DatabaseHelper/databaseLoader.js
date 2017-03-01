@@ -193,20 +193,20 @@ function createStoredProcedures(databaseHelper) {
 		return databaseHelper.query(`DROP PROCEDURE IF EXISTS ##praefix##spCreateUser;`);
 	}).then(() => {
 		return databaseHelper.query(`
-			CREATE PROCEDURE ##praefix##spCreateUser(IN username VARCHAR(255), IN password VARCHAR(512))
+			CREATE PROCEDURE ##praefix##spCreateUser(IN pUsername VARCHAR(255), IN password VARCHAR(512))
 			  BEGIN
 				DECLARE userId INT DEFAULT (SELECT id
 				  FROM ##praefix##users
-				  WHERE LOWER(username)=LOWER(username)
+				  WHERE LOWER(username)=LOWER(pUsername)
 				  LIMIT 0,1);
 			
 				IF userId IS NOT NULL THEN
-				  SELECT -1;
+				  SELECT userId as error;
 				ELSE
 				  INSERT INTO ##praefix##users
 					  (username, password)
 					VALUES
-					  (username, password);
+					  (pUsername, password);
 			 	  
 			 	  SET userId = LAST_INSERT_ID();
 			 	  
@@ -217,6 +217,45 @@ function createStoredProcedures(databaseHelper) {
 			 	  		
 				  SELECT userId as userId;
 				END IF;
+			  END;`);
+	}).then(() => {
+		return databaseHelper.query(`DROP PROCEDURE IF EXISTS ##praefix##spSetServerPermission;`);
+	}).then(() => {
+		return databaseHelper.query(`
+			CREATE PROCEDURE ##praefix##spSetServerPermission(IN userid INT, IN permissionName VARCHAR(128), IN permissionValue INT)
+			  BEGIN
+			  	DECLARE lowerPermissionName VARCHAR(128) DEFAULT LOWER(permissionName);
+			  
+			  	CASE lowerPermissionName
+  					WHEN 'access_files' THEN
+						UPDATE ##praefix##user_permissions_server
+							SET access_files=permissionValue
+							WHERE user=userid;
+					WHEN 'access_log' THEN
+						UPDATE ##praefix##user_permissions_server
+							SET access_log=permissionValue
+							WHERE user=userid;
+					WHEN 'modify_users' THEN
+						UPDATE ##praefix##user_permissions_server
+							SET modify_users=permissionValue
+							WHERE user=userid;
+					WHEN 'start_server' THEN
+						UPDATE ##praefix##user_permissions_server
+							SET start_server=permissionValue
+							WHERE user=userid;
+					WHEN 'stop_server' THEN
+						UPDATE ##praefix##user_permissions_server
+							SET stop_server=permissionValue
+							WHERE user=userid;
+					WHEN 'server_notifications' THEN
+						UPDATE ##praefix##user_permissions_server
+							SET server_notifications=permissionValue
+							WHERE user=userid;
+					ELSE
+						BEGIN
+							SELECT 0;
+						END;
+				END CASE;
 			  END;`);
 	});
 }
@@ -238,7 +277,31 @@ function createEntries(databaseHelper, tables) {
 
 					return databaseHelper.query(`
 						CALL ##praefix##spSetPermission('${userId}', 'use_plg_server', '1');
-					`)
+					`).then(() => {
+						return databaseHelper.query(`
+							CALL ##praefix##spSetServerPermission('${userId}', 'modify_users', '1');
+						`)
+					}).then(() => {
+						return databaseHelper.query(`
+							CALL ##praefix##spSetServerPermission('${userId}', 'access_files', '1');
+						`)
+					}).then(() => {
+						return databaseHelper.query(`
+							CALL ##praefix##spSetServerPermission('${userId}', 'access_log', '1');
+						`)
+					}).then(() => {
+						return databaseHelper.query(`
+							CALL ##praefix##spSetServerPermission('${userId}', 'start_server', '1');
+						`)
+					}).then(() => {
+						return databaseHelper.query(`
+							CALL ##praefix##spSetServerPermission('${userId}', 'stop_server', '1');
+						`)
+					}).then(() => {
+						return databaseHelper.query(`
+							CALL ##praefix##spSetServerPermission('${userId}', 'server_notifications', '1');
+						`)
+					});
 				});
 			}
 		});
