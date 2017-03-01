@@ -4,6 +4,8 @@ module.exports = class User {
 		this.user.customPermissions = new Map();
 		this.user.groups = [];
 		this.sockets = [];
+
+		if(!this.user.permissions) this.user.permissions = {};
 	}
 
 	/**
