@@ -3,6 +3,7 @@ const FormData = require('form-data');
 const fs = require('fs');
 const JuiHelper = require('../../CustomJuiHelper');
 const JuiViewBuilder = require('../../jui/custom/JuiViewBuilder');
+const AdmZip = require('adm-zip');
 
 const Tools = require('../../jui/Tools');
 
@@ -54,7 +55,7 @@ class PluginHelper {
 					let imported = require(`../../../../plugins/${name}/views/${view || 'home'}.js`);
 
 					if(imported.prototype instanceof JuiViewBuilder) {
-						let builder = new imported(juiHelper, this, this.socketHelper.getUserHelper());
+						let builder = new imported(this.socketHelper, juiHelper, this, this.socketHelper.getUserHelper());
 						builder.setPluginId(name);
 						builder.setParameters(params);
 						builder.setFormData(formData);
@@ -187,6 +188,20 @@ class PluginHelper {
 		} catch(error) {
 			console.log(error);
 		}
+	}
+
+	installFromFile(path) {
+		return new Promise((resolve, reject) => {
+			return resolve(new AdmZip(path));
+		}).then((zip) => {
+			const entries = zip.getEntries();
+
+			entries.forEach(function(zipEntry) {
+				if(zipEntry.entryName == "manifest.json") {
+					let manifest = zip.readAsText(zipEntry.entryName);
+				}
+			});
+		});
 	}
 
 	isInstalled(name) {

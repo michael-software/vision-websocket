@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/michaelsoftware1997/vision-websocket#readme",
   "dependencies": {
+    "adm-zip": "^0.4.7",
     "bcrypt": "^1.0.2",
     "express": "^4.14.0",
     "form-data": "^2.1.2",
