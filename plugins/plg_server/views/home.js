@@ -1,6 +1,16 @@
 const JuiViewBuilder = require('../../../app/utils/jui/custom/JuiViewBuilder');
 
 module.exports = class Builder extends JuiViewBuilder {
+
+	getFormData(formData) {
+		let userHelper = this.getUserHelper();
+
+		if(!formData || !formData.username || !formData.password)
+			return Promise.resolve();
+
+		return userHelper.createUser(formData.username, formData.password);
+	}
+
 	render() {
 		let juiHelper = this.getJuiHelper();
 		let userHelper = this.getUserHelper();
@@ -53,5 +63,39 @@ module.exports = class Builder extends JuiViewBuilder {
 		});
 
 		juiHelper.add(userListElement);
+
+
+
+		if(userHelper.getCurrentUser().hasPermission(userHelper.MODIFY_USERS))
+		juiHelper.add( this.renderUserCreation() );
+	}
+
+	renderUserCreation() {
+		let juiHelper = this.getJuiHelper();
+
+		let newUserContainer = new juiHelper.Container();
+		newUserContainer.setStyle({
+			padding: 10,
+			background: '#55000000'
+		});
+
+		let newUsername = new juiHelper.Input('username');
+		newUsername.setLabel('Benutzername: ');
+		newUserContainer.add(newUsername);
+
+		newUserContainer.nline();
+
+		let newPassword = new juiHelper.Input('password');
+		newPassword.setLabel('Kennwort: ');
+		newPassword.setPreset( juiHelper.Input.PASSWORD );
+		newUserContainer.add(newPassword);
+
+		newUserContainer.nline();
+
+		let submitButton = new juiHelper.Button('Benutzer erstellen');
+		submitButton.setClick( juiHelper.Action.submit() );
+		newUserContainer.add( submitButton );
+
+		return newUserContainer;
 	}
 };
