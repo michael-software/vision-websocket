@@ -1,6 +1,7 @@
 const User = require('./User');
 const Tools = require('../../jui/Tools');
 const PermissionHelper = require('../PermissionHelper/PermissionHelper');
+const PasswordHelper = require('../PasswordHelper');
 
 class UserHelper {
 	constructor(socketHelper, userList) {
@@ -16,7 +17,44 @@ class UserHelper {
 		this.MODIFY_USERS = UserHelper.MODIFY_USERS;
 	}
 
-	
+
+	/**
+	 * Creates a new user when allowed and the username doesn't exist
+	 * username {String} - The username of the new user
+	 * password {String} - The password of the new user (will be hashed)
+	 */
+	createUser(username, password) {
+		let currentUser = this.getCurrentUser();
+
+		if(!currentUser) return Promise.resolve();
+
+		if(!currentUser.hasPermission(PermissionHelper.MODIFY_USERS)) return Promise.reject();
+
+		return PasswordHelper.getHash(password).then((hash) => {
+
+			let databaseHelper = this.socketHelper.getDatabaseHelper();
+
+			return databaseHelper.query({
+				sql: 'CALL ##praefix##spCreateUser(?, ?)',
+				values: [username, hash]
+			}).then((data) => {
+
+				if(!data || !data.rows || !data.rows[0] || !data.rows[0][0] || !data.rows[0][0].userId) return Promise.reject();
+
+				const userId = data.rows[0][0].userId;
+
+				let newUser = new User({
+					id: userId,
+					server: null,
+					username: username.toLowerCase()
+				});
+
+				this._userList.push(newUser);
+			});
+
+		});
+	}
+
 	/**
 	 * Returns the current logged in user
 	 * @returns {User} - The current user
@@ -49,6 +87,10 @@ class UserHelper {
 	 * @returns {User|null} - Returns the user or null (user not found)
 	 */
 	getUser(identification) {
+		if(!identification) {
+			return this.getCurrentUser();
+		}
+
 		if(Tools.isNumeric(identification)) {
 			return this._userList.find(function(user) {
 				return user.getId() == identification;
