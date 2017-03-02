@@ -8,7 +8,7 @@ const PromiseMiddleware = require('./middlewares/Promises');
 const AuthenticationMiddleware = require('./middlewares/Authentication');
 const PluginHelper = require('../utils/helper/PluginHelper/PluginHelper');
 
-const UPLOAD_FIELD_NAME = 'files';
+const UPLOAD_FIELD_NAME = 'files[]';
 
 class RestManager {
 	constructor(express, config) {
