@@ -36,7 +36,7 @@ class Container extends JuiView {
 
 	/**
 	 * Adds a new line to the jui
-	 * @param count {int} - How many new lines should be inserted
+	 * @param [count] {int} - How many new lines should be inserted (default = 1)
 	 */
 	nline(count) {
 		if(!count) count = 1;
