@@ -1,10 +1,17 @@
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 const fs = require('fs');
+const path = require('path');
 const JuiHelper = require('../../CustomJuiHelper');
+const Plugin = require('../PluginHelper/Plugin');
+const PermissionHelper = require('../PermissionHelper/PermissionHelper');
+const FileHelper = require('../FileHelper/FileHelper');
 const JuiViewBuilder = require('../../jui/custom/JuiViewBuilder');
+const AdmZip = require('adm-zip');
 
 const Tools = require('../../jui/Tools');
+
+const PLUGIN_DIR = path.join( FileHelper.getParent(__dirname, 4),  'plugins');
 
 
 class PluginHelper {
@@ -51,10 +58,10 @@ class PluginHelper {
 				try {
 					let juiHelper = new JuiHelper();
 
-					let imported = require(`../../../../plugins/${name}/views/${view || 'home'}.js`);
+					let imported = require(path.join(PLUGIN_DIR, name, 'views', (view || 'home')) + '.js');
 
 					if(imported.prototype instanceof JuiViewBuilder) {
-						let builder = new imported(juiHelper, this, this.socketHelper.getUserHelper());
+						let builder = new imported(this.socketHelper, juiHelper, this, this.socketHelper.getUserHelper());
 						builder.setPluginId(name);
 						builder.setParameters(params);
 						builder.setFormData(formData);
@@ -176,7 +183,7 @@ class PluginHelper {
 
 	install(pluginId) {
 		try {
-			let imported = require('../../../../plugins/' + pluginId + '/install.js');
+			let imported = require( path.join(PLUGIN_DIR, pluginId, 'install.js') );
 
 			if(imported.call) {
 				let dbHelper = this.socketHelper.getDatabaseHelper();
@@ -187,6 +194,54 @@ class PluginHelper {
 		} catch(error) {
 			console.log(error);
 		}
+	}
+
+	installFromFile(zipPath) {
+		let zip = null;
+		let manifestObject = null;
+
+		return new Promise((resolve, reject) => {
+			return resolve(new AdmZip(zipPath));
+		}).then((admZip) => {
+			zip = admZip;
+
+			const entries = zip.getEntries();
+			let manifest = null;
+
+			entries.forEach(function(zipEntry) {
+				if(manifest) return;
+
+				if(zipEntry.entryName == "manifest.json") {
+					manifest = zip.readAsText(zipEntry.entryName);
+				}
+			});
+
+			if(!manifest) return Promise.reject(new Error('no manifest.json found'));
+			return manifest;
+		}).then((manifestData) => {
+			return JSON.parse(manifestData);
+		}).then((manifest) => {
+			if(!manifest || !manifest.name || !manifest.id || !manifest.version) return Promise.reject(new Error('no valide manifest.json found'));
+
+			manifestObject = manifest;
+
+			const pluginDir = path.join(PLUGIN_DIR, manifest.id);
+
+			try {
+				fs.mkdirSync(pluginDir);
+
+				return Promise.resolve(pluginDir);
+			} catch(error) {
+				return Promise.reject('Can\'t install plugin');
+			}
+		}).then((pluginDir) => {
+			zip.extractAllTo(pluginDir, true);
+
+			this.install(manifestObject.id);
+
+			let plugin = new Plugin(manifestObject);
+			this.plugins.set(plugin.getId(), plugin);
+		});
 	}
 
 	isInstalled(name) {
@@ -210,6 +265,61 @@ class PluginHelper {
 
             resolve(JSON.parse(response));
         }).catch(reject);
+	}
+
+	uninstall(pluginId) {
+		return new Promise((resolve, reject) => {
+
+			const userHelper = this.socketHelper.getUserHelper();
+			if(userHelper && userHelper.getCurrentUser() &&
+				userHelper.getCurrentUser().hasPermission( PermissionHelper.MANAGE_EXTENSIONS ))
+			{
+				if(this.plugins.has(pluginId)) {
+					if(PluginHelper.isServerPlugin(pluginId)) return reject('Can\'t remove server plugin.');
+					deleteFolderRecursive( path.join(PLUGIN_DIR, pluginId) );
+					this.plugins.delete(pluginId);
+
+					return resolve();
+				}
+				console.log(userHelper.getCurrentUser());
+			}
+
+			return reject();
+
+		});
+	}
+
+	static isServerPlugin(pluginId) {
+		switch(pluginId) {
+			case 'plg_home':
+			case 'plg_server':
+			case 'plg_license':
+				return true;
+			default:
+				return false;
+		}
+	}
+}
+
+
+function deleteFolderRecursive(path) {
+	if(!path.startsWith(PLUGIN_DIR)) return;
+
+	if( fs.existsSync(path) ) {
+		fs.readdirSync(path).forEach(function(file,index){
+			let curPath = path + "/" + file;
+			if(fs.lstatSync(curPath).isDirectory()) { // recurse
+				deleteFolderRecursive(curPath);
+			} else { // delete file
+				fs.unlinkSync(curPath);
+			}
+		});
+
+		try {
+			fs.rmdirSync(path);
+		} catch(e) {
+			if(e.code == 'ENOTEMPTY') deleteFolderRecursive(path);
+		}
 	}
 }
 

@@ -1,7 +1,8 @@
 const Tools = require('../../jui/Tools');
 
 class JuiViewBuilder {
-	constructor(juiHelper, pluginHelper, userHelper, pluginId) {
+	constructor(connectionHelper, juiHelper, pluginHelper, userHelper, pluginId) {
+		this.connectionHelper = connectionHelper;
 		this.juiHelper = juiHelper;
 		this.userHelper = userHelper;
 		this.pluginHelper = pluginHelper;
@@ -22,6 +23,10 @@ class JuiViewBuilder {
 
 	getPluginHelper() {
 		return this.pluginHelper;
+	}
+
+	getUploadHelper() {
+		return this.connectionHelper.getUploadHelper();
 	}
 
 	getDatabaseHelper() {

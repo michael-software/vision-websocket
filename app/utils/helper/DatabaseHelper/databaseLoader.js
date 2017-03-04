@@ -159,6 +159,7 @@ function createUserPermissionsServerTable(databaseHelper) {
 			start_server INT DEFAULT 0,
 			stop_server INT DEFAULT 0,
 			server_notifications INT DEFAULT 0,
+			manage_extensions INT DEFAULT 0,
 			CONSTRAINT user_permissions_server__users_id_fk
 				FOREIGN KEY (user)
 				REFERENCES users (id)
@@ -251,6 +252,10 @@ function createStoredProcedures(databaseHelper) {
 						UPDATE ##praefix##user_permissions_server
 							SET server_notifications=permissionValue
 							WHERE user=userid;
+					WHEN 'manage_extensions' THEN
+						UPDATE ##praefix##user_permissions_server
+							SET manage_extensions=permissionValue
+							WHERE user=userid;
 					ELSE
 						BEGIN
 							SELECT 0;
@@ -300,6 +305,10 @@ function createEntries(databaseHelper, tables) {
 					}).then(() => {
 						return databaseHelper.query(`
 							CALL ##praefix##spSetServerPermission('${userId}', 'server_notifications', '1');
+						`)
+					}).then(() => {
+						return databaseHelper.query(`
+							CALL ##praefix##spSetServerPermission('${userId}', 'manage_extensions', '1');
 						`)
 					});
 				});
