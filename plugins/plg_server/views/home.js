@@ -6,14 +6,12 @@ module.exports = class Builder extends JuiViewBuilder {
 		if(!formData)
 			return Promise.reject();
 
-		console.log(formData);
-
 		if(formData.username && formData.password) {
 			let userHelper = this.getUserHelper();
 
 			return userHelper.createUser(formData.username, formData.password);
-		} else if(formData['plugin[]'] && formData['plugin[]']['0']) {
-			const uploadId = formData['plugin[]']['0'];
+		} else if(formData['plugin'] && formData['plugin'][0]) {
+			const uploadId = formData['plugin'][0];
 
 			return this.getUploadHelper().getUploaded(uploadId).then((path) => {
 				return this.pluginHelper.installFromFile(path.path);
