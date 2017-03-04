@@ -1,10 +1,11 @@
 const fs = require('fs');
 const crypto = require("crypto");
 
-class UploadHelper {
+let uploaded = {};
+let uploadListeners = {};
+
+class UploadHelper { // TODO: make UploadHelper scoped to user
     constructor(socketHelper) {
-        this.uploaded = {};
-        this.uploadListeners = {};
         this.socketHelper = socketHelper;
     }
 
@@ -13,23 +14,26 @@ class UploadHelper {
 	}
 
     setUploaded(id, path) {
-        if(this.uploadListeners[id] && this.uploadListeners[id].success && this.uploadListeners[id].error) {
-            this.uploadListeners[id].success({
+        console.log('uploaded', path);
+
+        if(uploadListeners[id] && uploadListeners[id].success && uploadListeners[id].error) {
+            uploadListeners[id].success({
                 path: path,
                 id: id
             });
         }
 
-        this.uploaded[id] = {
+        uploaded[id] = {
             path: path,
             id: id
         };
     }
 
     getUploaded(id) {
+		console.log('getuploaded', id);
         return new Promise((resolve, reject) => {
-            if(this.uploaded[id]) {
-                resolve(this.uploaded[id]);
+            if(uploaded[id]) {
+                resolve(uploaded[id]);
             } else {
                 this.listenUpload(id, resolve, reject);
             }
@@ -37,7 +41,7 @@ class UploadHelper {
     }
 
     listenUpload(id, success, error) {
-        this.uploadListeners[id] = {
+        uploadListeners[id] = {
             success: success,
             error: error
         };
