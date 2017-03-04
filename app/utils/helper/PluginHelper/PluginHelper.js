@@ -3,6 +3,7 @@ const FormData = require('form-data');
 const fs = require('fs');
 const path = require('path');
 const JuiHelper = require('../../CustomJuiHelper');
+const Plugin = require('../PluginHelper/Plugin');
 const FileHelper = require('../FileHelper/FileHelper');
 const JuiViewBuilder = require('../../jui/custom/JuiViewBuilder');
 const AdmZip = require('adm-zip');
@@ -194,17 +195,51 @@ class PluginHelper {
 		}
 	}
 
-	installFromFile(path) {
+	installFromFile(zipPath) {
+		let zip = null;
+		let manifestObject = null;
+
 		return new Promise((resolve, reject) => {
-			return resolve(new AdmZip(path));
-		}).then((zip) => {
+			return resolve(new AdmZip(zipPath));
+		}).then((admZip) => {
+			zip = admZip;
+
 			const entries = zip.getEntries();
+			let manifest = null;
 
 			entries.forEach(function(zipEntry) {
+				if(manifest) return;
+
 				if(zipEntry.entryName == "manifest.json") {
-					let manifest = zip.readAsText(zipEntry.entryName);
+					manifest = zip.readAsText(zipEntry.entryName);
 				}
 			});
+
+			if(!manifest) return Promise.reject(new Error('no manifest.json found'));
+			return manifest;
+		}).then((manifestData) => {
+			return JSON.parse(manifestData);
+		}).then((manifest) => {
+			if(!manifest || !manifest.name || !manifest.id || !manifest.version) return Promise.reject(new Error('no valide manifest.json found'));
+
+			manifestObject = manifest;
+
+			const pluginDir = path.join(PLUGIN_DIR, manifest.id);
+
+			try {
+				fs.mkdirSync(pluginDir);
+
+				return Promise.resolve(pluginDir);
+			} catch(error) {
+				return Promise.reject('Can\'t install plugin');
+			}
+		}).then((pluginDir) => {
+			zip.extractAllTo(pluginDir, true);
+
+			this.install(manifestObject.id);
+
+			let plugin = new Plugin(manifestObject);
+			this.plugins.set(plugin.getId(), plugin);
 		});
 	}
 
