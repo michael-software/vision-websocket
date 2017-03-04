@@ -1,11 +1,15 @@
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 const fs = require('fs');
+const path = require('path');
 const JuiHelper = require('../../CustomJuiHelper');
+const FileHelper = require('../FileHelper/FileHelper');
 const JuiViewBuilder = require('../../jui/custom/JuiViewBuilder');
 const AdmZip = require('adm-zip');
 
 const Tools = require('../../jui/Tools');
+
+const PLUGIN_DIR = path.join( FileHelper.getParent(__dirname, 4),  'plugins');
 
 
 class PluginHelper {
@@ -52,7 +56,7 @@ class PluginHelper {
 				try {
 					let juiHelper = new JuiHelper();
 
-					let imported = require(`../../../../plugins/${name}/views/${view || 'home'}.js`);
+					let imported = require(path.join(PLUGIN_DIR, name, 'views', (view || 'home')) + '.js');
 
 					if(imported.prototype instanceof JuiViewBuilder) {
 						let builder = new imported(this.socketHelper, juiHelper, this, this.socketHelper.getUserHelper());
@@ -177,7 +181,7 @@ class PluginHelper {
 
 	install(pluginId) {
 		try {
-			let imported = require('../../../../plugins/' + pluginId + '/install.js');
+			let imported = require( path.join(PLUGIN_DIR, pluginId, 'install.js') );
 
 			if(imported.call) {
 				let dbHelper = this.socketHelper.getDatabaseHelper();
