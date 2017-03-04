@@ -90,6 +90,14 @@ class FileHelper {
 			}
 		});
 	}
+
+	static getParent(pPath, upper) {
+		for(; upper > 0; upper--) {
+			pPath = path.dirname(pPath);
+		}
+
+		return pPath;
+	}
 }
 
 FileHelper.TYPE_PRIVATE = 'private';
