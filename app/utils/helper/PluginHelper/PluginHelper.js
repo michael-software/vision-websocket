@@ -275,6 +275,7 @@ class PluginHelper {
 				userHelper.getCurrentUser().hasPermission( PermissionHelper.MANAGE_EXTENSIONS ))
 			{
 				if(this.plugins.has(pluginId)) {
+					if(PluginHelper.isServerPlugin(pluginId)) return reject('Can\'t remove server plugin.');
 					deleteFolderRecursive( path.join(PLUGIN_DIR, pluginId) );
 					this.plugins.delete(pluginId);
 
@@ -287,6 +288,18 @@ class PluginHelper {
 
 		});
 	}
+
+	static isServerPlugin(pluginId) {
+		switch(pluginId) {
+			case 'plg_home':
+			case 'plg_server':
+			case 'plg_license':
+				return true;
+			default:
+				return false;
+		}
+	}
+}
 
 
 function deleteFolderRecursive(path) {
