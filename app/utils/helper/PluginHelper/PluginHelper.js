@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const JuiHelper = require('../../CustomJuiHelper');
 const Plugin = require('../PluginHelper/Plugin');
+const PermissionHelper = require('../PermissionHelper/PermissionHelper');
 const FileHelper = require('../FileHelper/FileHelper');
 const JuiViewBuilder = require('../../jui/custom/JuiViewBuilder');
 const AdmZip = require('adm-zip');
@@ -264,6 +265,48 @@ class PluginHelper {
 
             resolve(JSON.parse(response));
         }).catch(reject);
+	}
+
+	uninstall(pluginId) {
+		return new Promise((resolve, reject) => {
+
+			const userHelper = this.socketHelper.getUserHelper();
+			if(userHelper && userHelper.getCurrentUser() &&
+				userHelper.getCurrentUser().hasPermission( PermissionHelper.MANAGE_EXTENSIONS ))
+			{
+				if(this.plugins.has(pluginId)) {
+					deleteFolderRecursive( path.join(PLUGIN_DIR, pluginId) );
+					this.plugins.delete(pluginId);
+
+					return resolve();
+				}
+				console.log(userHelper.getCurrentUser());
+			}
+
+			return reject();
+
+		});
+	}
+
+
+function deleteFolderRecursive(path) {
+	if(!path.startsWith(PLUGIN_DIR)) return;
+
+	if( fs.existsSync(path) ) {
+		fs.readdirSync(path).forEach(function(file,index){
+			let curPath = path + "/" + file;
+			if(fs.lstatSync(curPath).isDirectory()) { // recurse
+				deleteFolderRecursive(curPath);
+			} else { // delete file
+				fs.unlinkSync(curPath);
+			}
+		});
+
+		try {
+			fs.rmdirSync(path);
+		} catch(e) {
+			if(e.code == 'ENOTEMPTY') deleteFolderRecursive(path);
+		}
 	}
 }
 
