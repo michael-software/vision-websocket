@@ -18,6 +18,7 @@ module.exports = function(config) {
 								    permissions.stop_server,
 								    permissions.server_notifications,
 								    permissions.access_log,
+								    permissions.manage_extensions,
 								    
 									GROUP_CONCAT(custom_permissions.name ORDER BY custom_permissions.id) AS cpermission_name,
 									GROUP_CONCAT(custom_permissions.value ORDER BY custom_permissions.id) AS cpermission_value
@@ -33,7 +34,8 @@ module.exports = function(config) {
 								    permissions.start_server,
 								    permissions.stop_server,
 								    permissions.server_notifications,
-								    permissions.access_log
+								    permissions.access_log,
+								    permissions.manage_extensions
 								
 								`).then((data) => {
 			let userArray = [];
@@ -51,7 +53,8 @@ module.exports = function(config) {
 						[PermissionHelper.MODIFY_USERS]: userData[PermissionHelper.MODIFY_USERS],
 						[PermissionHelper.LOG_ACCESS]: userData[PermissionHelper.LOG_ACCESS],
 						[PermissionHelper.SERVER_NOTIFICATIONS]: userData[PermissionHelper.SERVER_NOTIFICATIONS],
-						[PermissionHelper.START_SERVER]: userData[PermissionHelper.START_SERVER]
+						[PermissionHelper.START_SERVER]: userData[PermissionHelper.START_SERVER],
+						[PermissionHelper.MANAGE_EXTENSIONS]: userData[PermissionHelper.MANAGE_EXTENSIONS]
 					}
 				});
 

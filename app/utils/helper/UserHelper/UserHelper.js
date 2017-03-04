@@ -15,6 +15,7 @@ class UserHelper {
 		this.SERVER_NOTIFICATIONS = UserHelper.SERVER_NOTIFICATIONS;
 		this.LOG_ACCESS = UserHelper.LOG_ACCESS;
 		this.MODIFY_USERS = UserHelper.MODIFY_USERS;
+		this.MANAGE_EXTENSIONS = UserHelper.MANAGE_EXTENSIONS;
 	}
 
 
@@ -246,6 +247,7 @@ UserHelper.START_SERVER = PermissionHelper.START_SERVER;
 UserHelper.SERVER_NOTIFICATIONS = PermissionHelper.SERVER_NOTIFICATIONS;
 UserHelper.LOG_ACCESS = PermissionHelper.LOG_ACCESS;
 UserHelper.MODIFY_USERS = PermissionHelper.MODIFY_USERS;
+UserHelper.MANAGE_EXTENSIONS = PermissionHelper.MANAGE_EXTENSIONS;
 
 
 module.exports = UserHelper;
