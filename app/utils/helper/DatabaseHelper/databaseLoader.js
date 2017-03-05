@@ -72,15 +72,10 @@ function createUsersTable(databaseHelper) {
 		CREATE TABLE IF NOT EXISTS ##praefix##users
 		(
 			id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-			name VARCHAR(255) NOT NULL,
+			username VARCHAR(255) NOT NULL,
 			password VARCHAR(512) NOT NULL,
-			user INT NOT NULL,
 			state TINYINT DEFAULT 0 NOT NULL,
-			creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			CONSTRAINT jwt__users_id_fk
-				FOREIGN KEY (user)
-				REFERENCES users (id)
-				ON DELETE CASCADE
+			creationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		);
 	`);
 }
