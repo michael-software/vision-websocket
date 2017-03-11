@@ -74,10 +74,10 @@ class JwtHelper {
 							if(row.refused === 0) {
 								return data;
 							} else {
-								return reject();
+								return reject('token refused');
 							}
 						} else {
-							return reject();
+							return reject('token expired and signature not found');
 						}
 					}).then((data) => {
 						this._update(decoded).then((token) => {
