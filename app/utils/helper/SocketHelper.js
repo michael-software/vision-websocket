@@ -82,13 +82,30 @@ class SocketHelper extends ConnectionHelper {
     }
 
     getSearch(data) {
+		console.log('return search', data);
+
         if(data && data.query) {
-            this.searchHelper.getSearch(data.query).then((response) => {
-                this.socket.emit('search', {
-                    request: data,
-                    response: response
-                });
-            });
+            if(data.format === 'jui') {
+            	console.log('return search jui');
+				this.searchHelper.getSearchView(data.query).then((response) => {
+					this.socket.emit('search', {
+					    request: data,
+						response: {
+							data: response.getArray(),
+							head: null
+						}
+					});
+				});
+            } else {
+				console.log('return search json');
+
+				this.searchHelper.getSearch(data.query).then((response) => {
+					this.socket.emit('search', {
+						request: data,
+						response: response
+					});
+				});
+			}
         }
     }
 
