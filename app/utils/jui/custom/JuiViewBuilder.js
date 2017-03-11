@@ -59,7 +59,11 @@ class JuiViewBuilder {
 
 
 	setParameters(params) {
-		this.params = decodeURI(params).split('/');
+		if(params) {
+			this.params = decodeURI(params).split('/');
+		} else {
+			this.params = [];
+		}
 	}
 
 	getParameter(index) {
