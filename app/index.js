@@ -65,7 +65,7 @@ serverHelper.init().then((data) => {
 
 			socket.on('login', function (data) {
 				if (data.server && data.bearer || data.authtoken) {
-					console.log('	\x1b[33m%s\x1b[0m:', 'login with token');
+					console.log('	\x1b[33m%s\x1b[0m:', 'login with token', data.bearer || data.authtoken);
 					loginHelper.loginToken(data.server, data.bearer || data.authtoken);
 				} else if (data.server && data.username && data.password) {
 					console.log('	\x1b[33m%s\x1b[0m:', 'login with credentials');

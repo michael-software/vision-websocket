@@ -16,10 +16,10 @@ class LoginHelper {
     }
 
     loginToken(server, authtoken) {
+
 		if(this.socketHelper) {
 			return new Promise((resolve, reject) => {
 				this.jwtHelper.validate(authtoken).then((data) => {
-
 					console.log('validated', data);
 
 					let loginData = {
