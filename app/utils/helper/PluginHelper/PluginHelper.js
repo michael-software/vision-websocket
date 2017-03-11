@@ -43,7 +43,7 @@ class PluginHelper {
 					return resolve( data.json() );
 				}).catch(reject);
 			} else {
-                return reject('unknown error 2');
+				return resolve(this.getPlugins());
             }
 		});
 	}
@@ -68,11 +68,14 @@ class PluginHelper {
 
 						let render = builder.startRender();
 
+						let plugin = this.plugins.get(name);
+
 						render.then((data) => {
 							resolve({
 								data: data,
 								head: {
-									scripts: builder.getScripts()
+									scripts: builder.getScripts(),
+									title: plugin.getName()
 								}
 							});
 						}).catch((error) => {
@@ -87,72 +90,17 @@ class PluginHelper {
 				}
 
 			} else {
+				let juiHelper = new JuiHelper();
 
-
-				let loginHelper = this.socketHelper.getLoginHelper();
-
-				if (loginHelper.getServer() && loginHelper.getToken()) {
-					let url = `${loginHelper.getServer()}/api/plugin.php?plugin=${name}`;
-					if (view) {
-						url += `&page=${view}`;
-					}
-					if (params) {
-						url += `&cmd=${params}`;
-					}
-
-
-					let data = new FormData();
-					let config = {
-						headers: {
-							Authorization: `bearer ${loginHelper.getToken()}`
-						},
-						method: 'GET'
-					};
-
-					if (formData) {
-						//let uploadHelper = this.socketHelper.uploadHelper;
-
-						let promises = [];
-						let keys = [];
-
-						for (let key in formData) {
-							if (!formData.hasOwnProperty(key)) continue;
-
-							if (!formData[key].type) {
-								data.append(key, formData[key]);
-							} else if (formData[key].type == 'filelist') {
-								let filelist = formData[key];
-
-								for (let index in filelist) {
-									if (filelist.hasOwnProperty(index)) {
-
-										if (Tools.isNumeric(index) && Tools.isNumeric(filelist[index])) {
-											keys[filelist[index]] = key;
-											promises.push(this.uploadHelper.getUploaded(filelist[index]));
-										}
-									}
-								}
-							}
-						}
-
-						config.method = 'POST';
-						config.body = data;
-
-						Promise.all(promises).then((data) => {
-							for (let i = 0, z = data.length; i < z; i++) {
-								config.body.append(keys[data[i]['id']], fs.createReadStream(data[i]['path']));
-							}
-
-							//config.body.append('');
-							this.fetchPlugin(url, config, resolve, reject);
-						})
-					} else {
-						this.fetchPlugin(url, config, resolve, reject);
-					}
+				if(!this.isInstalled(name)) {
+					juiHelper.add(new JuiHelper.Headline("No plugin with this name found"));
 				} else {
-					reject('unknown error');
+					juiHelper.add(new JuiHelper.Headline("No permission"));
 				}
 
+				return resolve({
+					data: juiHelper.getArray()
+				});
 			}
 		});
 	}
@@ -165,6 +113,9 @@ class PluginHelper {
 
 		let userHelper = this.socketHelper.getUserHelper();
 		let currentUser = userHelper.getCurrentUser();
+
+		console.log(pluginId, currentUser);
+
 
 		return currentUser.hasPermission(`use_${pluginId}`);
 	}
