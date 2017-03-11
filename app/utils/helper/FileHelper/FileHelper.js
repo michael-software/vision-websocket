@@ -8,6 +8,7 @@ const User = require('../UserHelper/User');
 const PermissionHelper = require('../PermissionHelper/PermissionHelper');
 
 const CustomFile = require('./File');
+const CustomDirectory = require('./Directory');
 
 class FileHelper {
 	constructor(connectionHelper) {
@@ -51,6 +52,46 @@ class FileHelper {
 	 */
 	getUserFileDirectory(user) {
 		return path.join(this.getUserDirectory(user), 'files');
+	}
+
+	getFolderContent(type, pPath) {
+		if(type === this.TYPE_PRIVATE) {
+			pPath = pPath.replace(/\./g, '');
+			pPath = path.normalize(pPath);
+
+			const userPath = this.getUserFileDirectory();
+			pPath = path.join(userPath, pPath);
+
+			return new Promise((resolve, reject) => {
+				const files = fs.readdirSync(pPath);
+
+				let promiseArray = files.map((file) => {
+					const filePath = path.join(pPath, file);
+
+					return this.getFileOrFolder(filePath).catch(() => {
+						return Promise.resolve();
+					});
+				});
+
+				Promise.all(promiseArray).then((customFiles) => {
+					resolve(customFiles);
+				});
+			});
+		}
+
+		return Promise.reject();
+	}
+
+	getFileOrFolder(path) {
+		return new Promise((resolve, reject) => {
+			const fileInfo = fs.lstatSync(path);
+
+			if(fileInfo.isDirectory()) {
+				return resolve( new CustomDirectory(path, fileInfo) );
+			} else if(fileInfo.isFile()) {
+				return resolve( new CustomFile(path, fileInfo) );
+			}
+		});
 	}
 
 	isAllowed(type) {
