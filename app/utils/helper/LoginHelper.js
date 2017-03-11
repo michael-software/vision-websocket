@@ -122,7 +122,7 @@ class LoginHelper {
     }
 
     parseLoginInfo(data) {
-    	if(data.id && data.token && data.server) {
+    	if(data.id && data.token) {
     		this.currentUser = this.socketHelper.getUserHelper().getUser(data.id);
 
     		if(this.currentUser) {
