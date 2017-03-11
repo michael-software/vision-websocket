@@ -28,16 +28,10 @@ class RestManager {
 
 		express.get('/plugins', function (req, res) {
 			res.promise(new Promise((resolve, reject) => {
-				let plugins = req.connectionHelper.getPluginHelper().getPlugins().values();
-
-
-				let pluginArray = [];
-				for(let plugin of plugins) {
-					pluginArray.push(plugin);
-				}
+				let plugins = req.connectionHelper.getPluginHelper().getPluginList();
 
 				return resolve({
-					data: pluginArray
+					data: plugins
 				});
 			}));
 		});

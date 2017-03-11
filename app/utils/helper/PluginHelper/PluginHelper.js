@@ -25,27 +25,12 @@ class PluginHelper {
 	}
 
 	getPluginList(data) {
-		//console.log('this', data);
+		let pluginArray = [];
+		for(let plugin of this.plugins.values()) {
+			pluginArray.push(plugin);
+		}
 
-		return new Promise((resolve, reject) => {
-			let loginHelper = this.socketHelper.getLoginHelper();
-
-			if (loginHelper.getServer() && loginHelper.getToken()) {
-				return fetch(`${loginHelper.getServer()}/api/plugins.php`, {
-					headers: {
-						Authorization: `bearer ${loginHelper.getToken()}`
-					}
-				}).then(function (data) {
-					if (!data) {
-						throw new Error('Bad response');
-					}
-
-					return resolve( data.json() );
-				}).catch(reject);
-			} else {
-				return resolve(this.getPlugins());
-            }
-		});
+		return Promise.resolve(pluginArray);
 	}
 
 	getPlugin(name, view, params, formData) {
@@ -113,9 +98,6 @@ class PluginHelper {
 
 		let userHelper = this.socketHelper.getUserHelper();
 		let currentUser = userHelper.getCurrentUser();
-
-		console.log(pluginId, currentUser);
-
 
 		return currentUser.hasPermission(`use_${pluginId}`);
 	}
@@ -232,7 +214,6 @@ class PluginHelper {
 
 					return resolve();
 				}
-				console.log(userHelper.getCurrentUser());
 			}
 
 			return reject();
