@@ -5,6 +5,7 @@ const upload = multer({ dest: 'uploads/' });
 
 
 const PromiseMiddleware = require('./middlewares/Promises');
+const CorsMiddleware = require('./middlewares/Cors');
 const AuthenticationMiddleware = require('./middlewares/Authentication');
 const PluginHelper = require('../utils/helper/PluginHelper/PluginHelper');
 
@@ -13,6 +14,7 @@ const UPLOAD_FIELD_NAME = 'files[]';
 class RestManager {
 	constructor(express, config) {
 		express.use(PromiseMiddleware);
+		express.use(CorsMiddleware);
 		express.use(AuthenticationMiddleware(config));
 
 		express.get('/login', function (req, res) {

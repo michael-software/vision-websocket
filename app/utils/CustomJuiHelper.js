@@ -33,4 +33,21 @@ CustomJuiHelper.Action.openPlugin = function(name, view, parameter) {
 	return null;
 };
 
+CustomJuiHelper.Action.openFile = function(path) {
+	if(path) {
+		return `openFile('${path}')`;
+	}
+
+	return null;
+};
+
+
+CustomJuiHelper.Action.openMedia = function(type, path) {
+	if(type && path) {
+		return `openMedia('${type}','${path}')`;
+	}
+
+	return null;
+};
+
 module.exports = CustomJuiHelper;

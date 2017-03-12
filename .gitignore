@@ -3,3 +3,8 @@ node_modules/
 files/
 temp/
 uploads/
+
+plugins/*
+!plugins/plg_home
+!plugins/plg_server
+!plugins/plg_user

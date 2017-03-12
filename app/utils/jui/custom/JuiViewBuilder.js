@@ -25,6 +25,10 @@ class JuiViewBuilder {
 		return this.pluginHelper;
 	}
 
+	getFileHelper() {
+		return this.connectionHelper.getFileHelper();
+	}
+
 	getUploadHelper() {
 		return this.connectionHelper.getUploadHelper();
 	}
