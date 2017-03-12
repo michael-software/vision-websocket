@@ -13,7 +13,6 @@ module.exports = class PasswordHelper {
 	}
 
 	static compare(password, hash) {
-		console.log(password, hash);
 		return bcrypt.compareSync(password, hash);
 	}
 };
