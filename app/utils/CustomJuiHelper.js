@@ -3,6 +3,8 @@ const JuiHelper = require('./jui/JuiHelper.js');
 const ButtonList = require('./jui/custom/models/ButtonList.js');
 const JuiViewBuilder = require('./jui/custom/JuiViewBuilder.js');
 
+const Actions = require('./jui/const/actions');
+
 class CustomJuiHelper extends JuiHelper {
 	constructor() {
 		super();
@@ -18,24 +20,30 @@ CustomJuiHelper.Action.openPlugin = function(name, view, parameter) {
 			name = name.getPluginId();
 		}
 
-		let retval = `openPlugin('${name}'`;
+		let parameters = [name];
 
 		if(view) {
-			retval += `,'${view}'`;
+			parameters.push(view);
 
 			if(parameter)
-				retval += `,'${parameter}'`;
+				parameters.push(parameter);
 		}
 
-		return `${retval})`;
+		return {
+			[Actions.FUNCTION_NAME]: "openPlugin",
+			[Actions.FUNCTION_PARAMETER]: parameters
+		};
 	}
 
 	return null;
 };
 
-CustomJuiHelper.Action.openFile = function(path) {
+CustomJuiHelper.Action.downloadFile = function(path) {
 	if(path) {
-		return `openFile('${path}')`;
+		return {
+			[Actions.FUNCTION_NAME]: "downloadFile",
+			[Actions.FUNCTION_PARAMETER]: [path]
+		};
 	}
 
 	return null;
@@ -44,7 +52,10 @@ CustomJuiHelper.Action.openFile = function(path) {
 
 CustomJuiHelper.Action.openMedia = function(type, path) {
 	if(type && path) {
-		return `openMedia('${type}','${path}')`;
+		return {
+			[Actions.FUNCTION_NAME]:"openMedia",
+			[Actions.FUNCTION_PARAMETER]:[type, path]
+		};
 	}
 
 	return null;
