@@ -1,5 +1,7 @@
 const fs = require('fs');
+const path = require('path');
 const CustomNode = require('./Node');
+const MimeHelper = require('./MimeHelper');
 
 module.exports =  class CustomFile extends CustomNode {
 	constructor(pPath, fileInfo) {
@@ -14,5 +16,13 @@ module.exports =  class CustomFile extends CustomNode {
 				return resolve(data);
 			});
 		});
+	}
+
+	getExtension() {
+		return path.extname(this.getPath()).slice(1).toLowerCase();
+	}
+
+	getMimeType() {
+		return MimeHelper.getMimeByFile(this);
 	}
 };
